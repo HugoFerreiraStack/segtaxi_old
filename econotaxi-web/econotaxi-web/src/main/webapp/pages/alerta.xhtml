@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<div class="row" style="margin-top: 20px;">
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			#{msg['alerta.titulo']}
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{menuView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{menuView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> #{msg['mensagem.tipo.erro']}</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!menuView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> #{msg['mensagem.tipo.sucesso']}</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+		            			
+		              				<div role="tabpanel">
+									    <!-- Tab panes -->
+									    <div class="tab-content">
+									        
+									        <div role="tabpanel" class="tab-pane active" id="cnab">
+									        
+									        	<div class="row">
+									        		<div class="col-md-12 col-xs-12">
+									        			<h3>#{msg['alerta.titulo.filtro']}</h3>
+									        		</div>
+									        		<br />
+										        	<div class="col-md-12 col-xs-12">
+										        		<label>#{msg['alerta.nomeArquivo']}:</label>
+    													<h:inputText value="#{alertaView.filtro.nomeArquivo}" styleClass="form-control" >
+    														<f:passThroughAttribute name="placeholder" value="#{msg['alerta.nomeArquivo']}" />
+    													</h:inputText>
+    												</div>
+    												<div class="col-md-12 col-xs-12">
+    													<label>#{msg['alerta.mensagemErro']}:</label>
+    													<h:inputText value="#{alertaView.filtro.mensagemErroArquivo}" styleClass="form-control" >
+    														<f:passThroughAttribute name="placeholder" value="#{msg['alerta.mensagemErro']}" />
+    													</h:inputText>
+    												</div>
+    												<div class="col-md-6 col-xs-12">
+    													<label>#{msg['alerta.tipoArquivo']}:</label>
+    													<h:selectOneMenu value="#{alertaView.filtro.tipoArquivo}" styleClass="form-control">
+										        			<f:selectItem itemValue="#{null}" itemLabel="#{msg['combo.selecione']}" />
+										        			<f:selectItem itemValue="1" itemLabel="#{msg['alerta.tipoArquivo.cnab']}" />
+										        			<f:selectItem itemValue="2" itemLabel="#{msg['alerta.tipoArquivo.slc']}" />
+										        		</h:selectOneMenu>
+    												</div>
+    												<div class="col-md-6 col-xs-12">
+    													<label>#{msg['alerta.problema']}:</label>
+    													<h:selectOneMenu value="#{alertaView.filtro.statusAlertaNotificacao}" styleClass="form-control">
+    														<f:selectItem itemValue="#{null}" itemLabel="#{msg['combo.selecione']}"/>
+    														<f:selectItem itemValue="2" itemLabel="#{msg['alerta.problema.sim']}" />
+    														<f:selectItem itemValue="1" itemLabel="#{msg['alerta.problema.nao']}" />
+    													</h:selectOneMenu>
+    												</div>
+    												<br/>
+    												<div class="col-md-12 col-xs-12" style="text-align: right; margin-top: 10px;">
+									        			<h:commandLink styleClass="btn btn-default" style="margin-right: 10px;" value="#{msg['botao.limpar']}"
+									        				action="#{alertaView.limparFormulario()}" />
+									        				
+									        			<h:commandLink styleClass="btn btn-info" value="#{msg['botao.pesquisar']}"
+									        				action="#{alertaView.consultarAlertas()}" />
+									        			<hr />
+									        		</div>
+									        	</div>
+									        	
+									        	<div class="no-padding table-responsive" style="margin-top: 20px;">
+									        		<pr:dataTable 
+														emptyMessage="#{msg['alerta.nenhumEncontrado']}"
+														id="alertaTable" 
+														var="alert" 
+														rows="10"
+														rowIndexVar="usuarioRow" 
+														value="#{alertaView.alertaDataModal}"
+														tableStyleClass="table table-striped card-table"
+														style="border: 0px solid black !important;"
+														tableStyle="border: 0px solid black !important;"
+														paginator="true"
+														lazy="true"
+														paginatorAlwaysVisible="true"
+														paginatorPosition="bottom"
+														paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+										               	rowsPerPageTemplate="5,10,15,20,50,100">
+										               	<pr:column style="width: 25px; vertical-align: top;">
+										               		<f:facet name="header">
+										               			<h:selectBooleanCheckbox id="selectTodos" onclick="checkAll( this.id, this.checked );">
+										               			</h:selectBooleanCheckbox>
+										               		</f:facet>
+										               		<h:selectBooleanCheckbox disabled="#{alert.statusAlerta == 2 ? true : false}"
+										               			value="#{alertaView.alertasSelecionadosParaResolucao[alert.id]}">
+										               		</h:selectBooleanCheckbox>
+										               	</pr:column>
+														<pr:column headerText="#{msg['alerta.grid.arquivo']}" style="text-align: left; font-size: 85%; width: 250px;">
+															<h:outputText value="#{alert.nomeArquivo}" />
+														</pr:column>
+														<pr:column headerText="#{msg['alerta.grid.dataOcorrencia']}" style="text-align: left; font-size: 85%; width: 200px;">
+															<h:outputText style="padding-left: 1px;" value="#{alert.dataOcorrencia}" >
+																<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+															</h:outputText>
+														</pr:column>
+														<pr:column headerText="#{msg['alerta.grid.mensagem']}" style="text-align: left; font-size: 85%; width: 300px;">
+															<h:outputText escape="false" value="#{alert.mensagemErroArquivo}" />
+														</pr:column>
+														<pr:column headerText="#{msg['alerta.grid.resolucao']}" style="text-align: left; font-size: 85%; width: 150px;">
+															<h:outputText value="#{alert.motivoResolucao}" />
+														</pr:column>
+														<pr:column headerText="#{msg['alerta.grid.acoes']}" style="text-align: left; font-size: 85%; width: 100px;">
+															<pr:commandLink 
+																style="margin-right: 5px; color: #70B9B0;" 
+																title="#{msg['alerta.grid.copiar.mensagem']}"
+																process="@this"
+																onclick="copiarAreaTransferencia('#{alert.mensagemErroArquivo}')">
+																<span class="fa fa-files-o"></span>
+															</pr:commandLink>
+															<pr:commandLink 
+																style="margin-right: 5px; color: #70B9B0;" 
+																title="#{msg['alerta.grid.copiar.resolucao']}"
+																rendered="#{not empty alert.motivoResolucao}"
+																process="@this"
+																onclick="copiarAreaTransferencia('#{alert.motivoResolucao}')">
+																<span class="fa fa-files-o"></span>
+															</pr:commandLink>
+														</pr:column>
+													</pr:dataTable>
+												</div>
+   												<div class="col-md-12 col-xs-12" style="text-align: right; margin-top: 10px;">
+								        			<pr:commandLink class="btn btn-info" value="#{msg['modal.alerta.resolver.todos']}"
+								        				oncomplete="exibirModalResolucaoTodosAlerta()" update="panelModalResolucaoTodosAlerta"/>
+								        		</div>
+									        </div>
+									    </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top: 20px;">
+			
+		   		<footer class="app-footer"> 
+				  	<div class="row">
+				    	<div class="col-xs-12" style="padding-top: 20px;">
+				      		<div class="footer-copyright">
+				        		Copyright &#169; <h:outputText value="#{loginView.nomeApp}" />.
+				      		</div>
+				    	</div>
+				  	</div>
+				</footer>
+		   	</div>
+		   	
+		   	<h:outputScript>
+	    		//<![CDATA[	
+				function copiarAreaTransferencia(texto) {
+				
+					var success   = true,
+				      range     = document.createRange(),
+				      selection;
+
+					if (window.clipboardData) {
+				    	window.clipboardData.setData("Text", texto);     
+				  	} else {
+				    	// Create a temporary element off screen.
+				    	var tmpElem = $("<div>");
+				    	tmpElem.css({
+				      		position: "absolute",
+				      		left:     "-1000px",
+				      		top:      "-1000px",
+				    	});
+				    	// Add the input value to the temp element.
+				    	tmpElem.text(texto);
+				    	$("body").append(tmpElem);
+				    	// Select temp element.
+				    	range.selectNodeContents(tmpElem.get(0));
+				    	selection = window.getSelection();
+				    	selection.removeAllRanges();
+				    	selection.addRange (range);
+				    	// Lets copy.
+				    	try { 
+				      		success = document.execCommand ("copy", false, null);
+				    	}
+				    	catch (e) {
+				      		copyToClipboardFF(texto);
+			    		}
+				    	if (success) {
+				      		tmpElem.remove();
+			    		}
+				  	}
+				}
+				
+				function copyToClipboardFF(text) {
+					window.prompt("Copy to clipboard: Ctrl C, Enter", text);
+				}
+				
+				function checkAll( inputId, state ){
+			       var idNew = inputId.substr(0, inputId.lastIndexOf(':'));
+	    		       var idtab = idNew;
+			       var elemetos = document.getElementById(idtab );
+			       var inputs = elemetos.getElementsByTagName('input');
+				   for (var i = 0; i <= inputs.length; i++){
+			         var input = inputs[i];
+			         if (input.disabled == false) {
+				         if (input != undefined) {
+				           if( input.getAttribute('type') == 'checkbox' && state){
+					             input.checked=true;
+				           } else{
+				             input.checked=false;
+				           }
+				         }
+			         }
+			       }
+			     }
+			//]]>
+			</h:outputScript>
+			
+		</ui:define>
+	
+	</ui:composition>
+
+</f:view>

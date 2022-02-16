@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<pr:remoteCommand autoRun="true" actionListener="#{veiculoLigueView.chamarModal()}" />
+		
+			<h:inputHidden id="latitudeVeiculoExistente" value="#{veiculoLigueView.veiculo.latitudeCorrente}" />
+			<h:inputHidden id="longitudeVeiculoExistente" value="#{veiculoLigueView.veiculo.longitudeCorrente}" />
+			<h:inputHidden id="dataVeiculoExistente" value="#{veiculoLigueView.veiculo.dataUltimaPosicao}">
+				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+			</h:inputHidden>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Desautorizar</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo da Não Autorização*:</label>
+				          					<h:inputTextarea id="motivoDesautorizacao" value="#{veiculoLigueView.motivoDesautorizacao}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Confirmar Desautorização"
+			            			process="@this,motivoDesautorizacao"
+			            			update="mensagens veiculoTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{veiculoLigueView.desautorizarVeiculo()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheBloqueio" tabindex="-1" role="dialog" aria-labelledby="myModalbloqueioLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheBloqueio">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Excluir</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente bloquear temporariamente o veículo?
+				          				</div>
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo do Bloqueio*:</label><br />
+				          					<h:inputTextarea id="motivoBloqueio" value="#{veiculoLigueView.motivoBloqueio}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Bloquear"
+			            			process="@this,motivoBloqueio"
+			            			update="mensagens veiculoTable"
+			            			oncomplete="fecharModalBloqueio()" 
+			            			action="#{veiculoLigueView.bloquearVeiculo()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalLocalizacao" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalLocalizacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Última Localização do Veículo</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          			
+				          				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
+								    		<pr:commandLink
+								    			styleClass="btn btn-primary"
+								    			process="@this"
+								    			immediate="true"
+								    			oncomplete="definirNovaLocalizacao()"
+												action="#{veiculoLigueView.atualizarLocalizacaoVeiculo()}"
+												update="latitudeVeiculoExistente longitudeVeiculoExistente dataVeiculoExistente dataFinal longitudeFinal latitudeFinal"> <i class="fa fa-refresh"></i> Atualizar Posição
+								    		</pr:commandLink>
+								    	</div>
+				          			
+				          				<div class="col-md-12">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap" style="height: 350px;"></div>
+				          				</div>
+				          				<br />
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Latitude:</label>
+				          					<h:inputText id="latitudeFinal" disabled="true" styleClass="latitudeVeiculo form-control" value="#{veiculoLigueView.veiculo.latitudeCorrente}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Longitude:</label>
+				          					<h:inputText id="longitudeFinal" disabled="true" styleClass="longitudeVeiculo form-control" value="#{veiculoLigueView.veiculo.longitudeCorrente}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Data Última Localização:</label>
+				          					<h:inputText id="dataFinal" disabled="true" styleClass="dataCorrenteVeiculo form-control" value="#{veiculoLigueView.veiculo.dataUltimaPosicao}">
+				          						<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+				          					</h:inputText>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheVeiculo">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Veículo</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-4">
+					          				<div class="col-md-12">
+							        			<label>Data de Solicitação:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.dataSolicitacao}">
+							        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+							        			</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Motorista:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.motorista.nome}" />
+											</div>
+											<br />
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Marca:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.marca}" />
+											</div>
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Suporte p/ Bicicleta:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty veiculoLigueView.veiculo.indicadorBicicleta and veiculoLigueView.veiculo.indicadorBicicleta eq 1}" value="Sim" />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty veiculoLigueView.veiculo.indicadorBicicleta or veiculoLigueView.veiculo.indicadorBicicleta ne 1}" value="Não" />
+											</div>
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Tipo:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{veiculoLigueView.veiculo.tipo eq 1}" value="Padrão" />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{veiculoLigueView.veiculo.tipo eq 2}" value="Executivo" />
+											</div>
+				          					<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Unidade:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.unidade}" />
+											</div>
+				          				</div>
+				          				<div class="col-md-4">
+											<div class="col-md-12" style="clear: both;">
+							        			<label>Data de Aprovação:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty veiculoLigueView.veiculo.dataAprovacao}" value="#{veiculoLigueView.veiculo.dataAprovacao}">
+							        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+							        			</h:inputText>
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty veiculoLigueView.veiculo.dataAprovacao}" value="Não possui">
+							        			</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Placa:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.placa}" />
+											</div>
+											<br />
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Modelo:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.modelo}" />
+											</div>
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Adaptado p/ Cadeirantes:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty veiculoLigueView.veiculo.indicadorAdaptado and veiculoLigueView.veiculo.indicadorAdaptado eq 1}" value="Sim" />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty veiculoLigueView.veiculo.indicadorAdaptado or veiculoLigueView.veiculo.indicadorAdaptado ne 1}" value="Não" />
+											</div>
+											<div class="col-md-12" style="clear: both; margin-top: 10px;">
+							        			<label>Possui Cadeirinha de Bebê:</label><br />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty veiculoLigueView.veiculo.indicadorCadeirinha and veiculoLigueView.veiculo.indicadorCadeirinha eq 1}" value="Sim" />
+							        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty veiculoLigueView.veiculo.indicadorCadeirinha or veiculoLigueView.veiculo.indicadorCadeirinha ne 1}" value="Não" />
+											</div>
+				          				</div>
+				          				<div class="col-md-4">
+											<div class="col-md-12" style="clear: both;">
+							        			<label>CRLV:</label><br />
+							        			<img src="#{veiculoLigueView.veiculo.imagemCrlv}" style="width: 300px;" title="CRLV" />
+											</div>
+				          				</div>
+				          				<div class="col-md-12" style="clear: both; margin-top: 10px;">
+						        			<label>Motivo Bloqueio:</label><br />
+						        			<h:inputTextarea disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.motivoBloqueio}" />
+										</div>
+										<div class="col-md-4" style="clear: both; margin-top: 10px;">
+						        			<label>Possui Rastreador?</label><br />
+						        			<h:inputTextarea rendered="#{veiculoLigueView.veiculo.indicadorRastreadorSeg eq 1}" disabled="true" styleClass="form-control" value="Possui" />
+						        			<h:inputTextarea rendered="#{veiculoLigueView.veiculo.indicadorRastreadorSeg eq 2}" disabled="true" styleClass="form-control" value="Não Possui" />
+						        			<h:inputTextarea rendered="#{empty veiculoLigueView.veiculo.indicadorRastreadorSeg}" disabled="true" styleClass="form-control" value="Sem Informação Ainda" />
+										</div>
+										<t:div rendered="#{veiculoLigueView.veiculo.indicadorRastreadorSeg eq 2}" styleClass="col-md-8" style="margin-top: 10px;">
+						        			<label>Mensagem Seg Rastreadores:</label><br />
+						        			<h:inputTextarea disabled="true" styleClass="form-control" value="#{veiculoLigueView.veiculo.msgErroRastreador}" />
+										</t:div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				          			<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary"
+				            			value="Verificar Rastreador SEG" 
+				            			update="panelModalDetalheVeiculo"
+				            			action="#{veiculoLigueView.verificarRastreadorSEG()}" />
+				          		
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-warning"
+				            			value="Visualizar Dados de Motorista" 
+				            			action="#{veiculoLigueView.detalharMotoristas()}" />
+				            		
+				            		<pr:commandLink 
+					            			styleClass="btn btn-sm btn-danger" 
+					            			rendered="#{veiculoLigueView.veiculo.status eq 1}"
+					            			value="Negar Autorização do Veículo" 
+					            			onclick="exibirExcluirVeiculo()" />
+					            		
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{veiculoLigueView.veiculo.status eq 1}"
+				            			value="Autorizar Veículo" 
+				            			action="#{veiculoLigueView.autorizarVeiculo()}" />
+				            			
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-danger" 
+				            			rendered="#{veiculoLigueView.veiculo.status eq 2}"
+				            			value="Bloquear Veículo" 
+				            			onclick="exibirBloquearVeiculo()" />
+				            			
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{veiculoLigueView.veiculo.status eq 5}"
+				            			value="Desbloquear Veículo" 
+				            			action="#{veiculoLigueView.desbloquearVeiculo}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				          		</div>
+				          		
+						  	</h:panelGroup>
+			         
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalDetalheAlterar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheVeiculoAlterar">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Veículo</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Cidade:</label><br />
+						        			<h:selectOneMenu 
+												id="cidadeAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.cidadePesquisa}" 
+												label="Cidade"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{veiculoLigueView.listaCidade}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+												<pr:ajax event="change" update="motoristaAlterar" listener="#{veiculoLigueView.carregarMotoristas()}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Motorista (Permissionário):</label><br />
+						        			<h:selectOneMenu 
+												id="motoristaAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.motorista}" 
+												label="Motorista (Permissionário)"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{veiculoLigueView.listaMotorista}" 
+															   var="motorista"
+															   itemLabel="#{motorista.nome}"
+															   itemValue="#{motorista}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Marca:</label><br />
+						        			<h:inputText id="marcaAlterar" styleClass="form-control" value="#{veiculoLigueView.veiculoAlterar.marca}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Suporte p/ Bicicleta:</label><br />
+						        			<h:selectOneMenu 
+												id="bikeAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.indicadorBicicleta}" 
+												label="Suporte p/ Bicicleta"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Possui" itemValue="1" />
+												<f:selectItem itemLabel="Não Possui" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Tipo:</label><br />
+						        			<h:selectOneMenu 
+												id="tipoAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.indicadorBicicleta}" 
+												label="Suporte p/ Bicicleta"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Padrão" itemValue="1" />
+												<f:selectItem itemLabel="Executivo" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+			          					<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Unidade:</label><br />
+						        			<h:inputText id="unidadeAlterar" styleClass="form-control" value="#{veiculoLigueView.veiculoAlterar.unidade}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Placa:</label><br />
+						        			<h:inputText id="placaAlterar" styleClass="form-control" value="#{veiculoLigueView.veiculoAlterar.placa}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Modelo:</label><br />
+						        			<h:inputText id="modeloAlterar" styleClass="form-control" value="#{veiculoLigueView.veiculoAlterar.modelo}" />
+										</div>
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Adaptado p/ Cadeirantes:</label><br />
+						        			<h:selectOneMenu 
+												id="cadeiranteAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.indicadorAdaptado}" 
+												label="Adaptado p/ Cadeirantes"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Sim" itemValue="1" />
+												<f:selectItem itemLabel="Não" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Possui Cadeirinha de Bebê:</label><br />
+						        			<h:selectOneMenu 
+												id="cadeirinhaAlterar"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.veiculoAlterar.indicadorCadeirinha}" 
+												label="Possui Cadeirinha de Bebê"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Possui" itemValue="1" />
+												<f:selectItem itemLabel="Não Possui" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary" 
+				            			value="Salvar Veículo" 
+				            			process="@this,cadeirinhaAlterar,cadeiranteAlterar,modeloAlterar,placaAlterar,bikeAlterar,marcaAlterar,unidadeAlterar"
+				            			action="#{veiculoLigueView.alterarVeiculo()}"
+				            			update="mensagens veiculoTable"
+				            			onclick="fecharModalDetalheAlterar()" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				          		</div>
+				          		
+						  	</h:panelGroup>
+			         
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{veiculoLigueView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{veiculoLigueView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!veiculoLigueView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalheVeiculo"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesVeiculoAlterar()">
+						        				<i class="fa fa-plus"></i> Adicionar Veículo
+						        				<f:setPropertyActionListener value="#{null}" target="#{veiculoLigueView.veiculo}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+							        	<div class="col-md-12">
+						        			<label>Nome do Motorista:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Motorista" 
+						        				value="#{veiculoLigueView.filtro.motorista.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Motorista" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-4">
+						        			<label>Data de Solicitação:</label>
+						        			<h:inputText id="dataSolicitacaoPesquisa" styleClass="form-control data date-picker" label="Data de Solicitação" value="#{veiculoLigueView.filtro.dataSolicitacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Solicitação" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Data de Aprovação:</label>
+						        			<h:inputText id="dataFinalizacaoPesquisa" styleClass="form-control data date-picker" label="Data de Aprovação" value="#{veiculoLigueView.filtro.dataAprovacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Aprovação" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Marca:</label>
+						        			<h:inputText id="marcaPesquisa" styleClass="form-control" label="Marca" value="#{veiculoLigueView.filtro.marca}">
+						        				<f:passThroughAttribute name="placeholder" value="Marca" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-4">
+						        			<label>Placa:</label>
+						        			<h:inputText id="placaPesquisa" styleClass="form-control" label="Placa" value="#{veiculoLigueView.filtro.placa}">
+						        				<f:passThroughAttribute name="placeholder" value="Placa" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Cidade:</label>
+						        			<h:inputText id="cidadePesquisa" styleClass="form-control" label="Cidade" value="#{veiculoLigueView.filtro.cidade}">
+						        				<f:passThroughAttribute name="placeholder" value="Cidade" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Status do Veículo:</label>
+						        			<h:selectOneMenu 
+						        				id="statusPesquisa"
+				        						styleClass="form-control"
+				        						value="#{veiculoLigueView.filtro.status}" 
+												label="Status do Veículo"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{veiculoLigueView.listaStatusVeiculo}" 
+															   var="status"
+															   itemLabel="#{status.descricao}"
+															   itemValue="#{status.status}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-4" style="clear: both;">
+						        			<label>Unidade:</label>
+						        			<h:inputText id="unidadePesquisa" styleClass="form-control" label="Unidade" value="#{veiculoLigueView.filtro.unidade}">
+						        				<f:passThroughAttribute name="placeholder" value="Unidade" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa unidadePesquisa placaPesquisa marcaPesquisa dataSolicitacaoPesquisa dataFinalizacaoPesquisa cidadePesquisa statusPesquisa veiculoTable mensagens"
+						        				action="#{veiculoLigueView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{veiculoLigueView.pesquisarVeiculoPorFiltro()}" 
+						        				update="veiculoTable"
+						        				process="@this,nomePesquisa,unidadePesquisa,placaPesquisa,marcaPesquisa,dataSolicitacaoPesquisa,dataFinalizacaoPesquisa,cidadePesquisa,statusPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="veiculoTable" 
+											var="veiculo" 
+											rows="10"
+											rowIndexVar="veiculoRow" 
+											value="#{veiculoLigueView.veiculoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{veiculoRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">
+												<pr:commandLink 
+													action="#{veiculoLigueView.carregarVeiculo(veiculo)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar Veiculo"
+													oncomplete="exibirDetalhesVeiculo();" 
+													update="panelModalDetalheVeiculo"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{veiculoLigueView.carregarVeiculoAlterar(veiculo)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Alterar Dados de Veiculo"
+													oncomplete="exibirDetalhesVeiculoAlterar();" 
+													update="panelModalDetalheVeiculoAlterar"
+													process="@this">
+													<span class="fa fa-edit"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{veiculoLigueView.carregarVeiculo(veiculo)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Visualizar Última Localização"
+													rendered="#{not empty veiculo.latitudeCorrente}"
+													oncomplete="exibirLocalizacaoVeiculo('#{veiculo.placa}');" 
+													update="panelModalLocalizacao latitudeVeiculoExistente longitudeVeiculoExistente dataVeiculoExistente"
+													process="@this">
+													<span class="fa fa-map-marker"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Motorista" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{veiculo.motorista.nome}" />
+											</pr:column>
+											<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 140px;">
+												<h:outputText value="#{veiculo.placa}" />
+											</pr:column>
+											<pr:column headerText="Marca" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{veiculo.marca}" />
+											</pr:column>
+											<pr:column headerText="Modelo" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{veiculo.modelo}" />
+											</pr:column>
+											<pr:column headerText="Unidade" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{veiculo.unidade}" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{veiculo.descricaoStatus}" />
+											</pr:column>
+											<pr:column headerText="Solicitação" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{veiculo.dataSolicitacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="veiculoTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="veiculoTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="veiculoTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script src="https://maps.google.com/maps/api/js?file=api&amp;v=3&amp;key=AIzaSyBqwOrp--K7rhl--mQvsdIqwSX4voNqR1g"></script>
+			
+			<script>
+			
+				function recarregarDatas() {
+	        		
+	        		$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	
+	        		$(".data").mask("99/99/9999");
+	        	}
+			
+				var map;
+			 	var center;
+			 	var latitude;
+			 	var longitude;
+			
+				function fecharModalVeiculo() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesVeiculo() {
+					$('#modalDetalhe').modal('show');
+				}
+				function fecharModalPercurso() {
+					$('#modalPercurso').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirPercursoVeiculo() {
+					$('#modalPercurso').modal('show');
+				}
+				function exibirBloquearVeiculo() {
+					$('#modalDetalhe').modal('hide');
+					$('#modalDetalheBloqueio').modal('show');
+				}
+				function fecharModalBloqueio() {
+					$('#modalDetalheBloqueio').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirExcluirVeiculo() {
+					$('#modalDetalhe').modal('hide');
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesVeiculoAlterar() {
+					$('#modalDetalheAlterar').modal('show');
+				}
+				function fecharModalDetalheAlterar() {
+					$('#modalDetalheAlterar').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				$( document ).ready(function() {
+			 		
+					recarregarDatas();
+					
+				 	$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+					    google.maps.event.trigger(map, "resize");
+					    map.setCenter(center);
+					    
+					 	$('#latitudeFinal').val($('#latitudeVeiculoExistente').val());
+					 	$('#longitudeFinal').val($('#longitudeVeiculoExistente').val());
+					 	$('#dataFinal').val($('#dataVeiculoExistente').val());
+					});
+				 	
+			 	});
+				
+				function exibirLocalizacaoVeiculo(placa) {
+					
+					latitude = $('#latitudeVeiculoExistente').val();
+					longitude = $('#longitudeVeiculoExistente').val();
+					
+					center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+			        map = new google.maps.Map(document.getElementById('googleMap'), {
+			          zoom: 15,
+			          mapTypeId: google.maps.MapTypeId.ROADMAP,
+			          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+			        });
+			        
+			        marker = new google.maps.Marker({
+			          position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+			          map: map,
+			          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/taxi.png",
+			          title: 'Placa: ' + placa
+			        });
+			        
+			        $('#modalLocalizacao').modal('show');
+				    
+				}
+				
+				function definirNovaLocalizacao() {
+					
+					if ($('#latitudeVeiculoExistente').val() != null) {
+						
+						
+						if ($('#latitudeVeiculoExistente').val() != '') {
+							
+							if (map != null) {
+								latitude = $('#latitudeVeiculoExistente').val();
+								longitude = $('#longitudeVeiculoExistente').val();
+								center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+								
+								google.maps.event.trigger(map, "resize");
+							    map.setCenter(center);
+							    marker.setPosition(center);
+							    
+							 	$('#latitudeFinal').val($('#latitudeVeiculoExistente').val());
+							 	$('#longitudeFinal').val($('#longitudeVeiculoExistente').val());
+							 	$('#dataFinal').val($('#dataVeiculoExistente').val());
+							}
+						}
+					}
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<style>
+				.controls {
+			        margin-top: 10px;
+			        border: 1px solid transparent;
+			        border-radius: 2px 0 0 2px;
+			        box-sizing: border-box;
+			        -moz-box-sizing: border-box;
+			        height: 32px;
+			        outline: none;
+			        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			    }
+			    
+			    .pac-container {
+			    	z-index: 999999 !important;
+			    }
+			</style>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Relatório de Motoristas e Corridas com Voucher (R$)
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{relatorioMotoristaCreditoView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{relatorioMotoristaCreditoView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!relatorioMotoristaCreditoView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro do Relatório</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Cidade*:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadeSelecionada"
+				        						styleClass="form-control"
+				        						value="#{relatorioMotoristaCreditoView.cidadeSelecionada}" 
+												label="Cidade"
+												required="true"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{relatorioMotoristaCreditoView.listaCidade}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+												<pr:ajax event="change" update="motoristas" listener="#{relatorioMotoristaCreditoView.selecionarCidade}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Motorista*:</label>
+						        			<h:selectOneMenu 
+						        				id="motoristas"
+				        						styleClass="form-control"
+				        						value="#{relatorioMotoristaCreditoView.motorista}" 
+												label="Motorista"
+												required="true"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{relatorioMotoristaCreditoView.motoristas}" 
+															   var="motorista"
+															   itemLabel="#{motorista.nome}"
+															   itemValue="#{motorista}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6" style="padding-top: 10px;">
+						        			<label>Mês de Referência*:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaFiltro1"
+				        						styleClass="form-control"
+				        						value="#{relatorioMotoristaCreditoView.mesReferencia}" 
+												label="Mês de Referência"
+												required="true"
+												style="height: 42px;">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+												<t:selectItems value="#{relatorioMotoristaCreditoView.ultimosMeses}" 
+															   var="mes"
+															   itemLabel="#{mes}"
+															   itemValue="#{mes}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Exibir Relatório"
+						        				action="#{relatorioMotoristaCreditoView.exibirRelatorio()}" 
+						        				update="mensagens relatorioEmpresa corridaTable"
+						        				process="@this,cidadeSelecionada,motoristas,empresaFiltro1" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+						        	<t:div id="relatorioEmpresa" styleClass="row">
+						        		<t:div rendered="#{not empty relatorioMotoristaCreditoView.motorista.id}">
+						        			<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        				<t:div rendered="#{not empty relatorioMotoristaCreditoView.valorConsumido}" style="margin-top: 10px">
+							        				<label>Valor a Receber:</label><br />
+							        				<h:inputText disabled="true" maxlength="500" styleClass="form-control" value="R$ #{relatorioMotoristaCreditoView.valorConsumido}">
+									        		</h:inputText>
+									        	</t:div>
+									        	<t:div rendered="#{empty relatorioMotoristaCreditoView.valorConsumido}" style="margin-top: 10px">
+							        				<label>Valor Consumido:</label><br />
+							        				<h:inputText disabled="true" maxlength="500" styleClass="form-control" value="R$ 0,00">
+									        		</h:inputText>
+									        	</t:div>
+						        			</div>
+						        			<br />
+						        			
+						        		</t:div>
+						        	</t:div>
+						        	
+				        			<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhuma corrida solicitada no período selecionado."
+											id="corridaTable" 
+											var="corrida" 
+											rows="10"
+											rowIndexVar="corridaRow" 
+											value="#{relatorioMotoristaCreditoView.corridaDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{corridaRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{corrida.descricaoStatus}" />
+											</pr:column>
+											<pr:column headerText="Nome do Passageiro" style="text-align: left; font-size: 85%; width: 280px;">
+												<h:outputText value="#{corrida.nomePassageiro}" rendered="#{not empty corrida.nomePassageiro}" />
+												<h:outputText value="#{corrida.usuario.nome}" rendered="#{empty corrida.nomePassageiro}" />
+											</pr:column>
+											<pr:column headerText="Nome do Motorista" style="text-align: left; font-size: 85%; width: 280px;">
+												<h:outputText value="#{corrida.usuarioMotorista.nome}" />
+											</pr:column>
+											<pr:column headerText="Cel. do Motorista" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{corrida.usuarioMotorista.celular}" />
+											</pr:column>
+											<pr:column headerText="Veículo" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText rendered="#{not empty corrida.veiculo}" value="#{corrida.veiculo.marca}" />
+											</pr:column>
+											<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 140px;">
+												<h:outputText rendered="#{not empty corrida.veiculo}" value="#{corrida.veiculo.placa}" />
+											</pr:column>
+											<pr:column headerText="Unidade" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText rendered="#{not empty corrida.veiculo}" value="#{corrida.veiculo.unidade}" />
+											</pr:column>
+											<pr:column headerText="Empresa" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="Ligue-Táxi" rendered="#{corrida.tipoTeleTaxi eq 1}" />
+												<h:outputText value="Tele-Táxi" rendered="#{corrida.tipoTeleTaxi eq 2}" />
+											</pr:column>
+											<pr:column headerText="Solicitação" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{corrida.dataSolicitacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Finalização" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{corrida.dataFinalizacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Tipo Carro" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText rendered="#{corrida.indicadorAdaptado eq 1}" value="Carro Adaptado" />
+												<h:outputText rendered="#{corrida.indicadorAdaptado ne 1}" value="Carro Padrão" />
+											</pr:column>
+											<pr:column headerText="Voucher" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{corrida.voucher}" />
+											</pr:column>
+											<pr:column headerText="Empresa" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText rendered="#{not empty corrida.empresaConveniada}" value="#{corrida.empresaConveniada.nome}" />
+											</pr:column>
+											<pr:column headerText="Valor Final" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{corrida.valorFinal}" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="corridaTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="corridaTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="corridaTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

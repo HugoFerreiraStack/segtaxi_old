@@ -1,0 +1,1366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<pr:remoteCommand autoRun="true" actionListener="#{motoristaView.chamarModal()}" />
+		
+	    	<h:inputHidden id="latitudeMotoristaExistente" value="#{motoristaView.motorista.latitudeCorrente}" />
+			<h:inputHidden id="longitudeMotoristaExistente" value="#{motoristaView.motorista.longitudeCorrente}" />
+			<h:inputHidden id="dataMotoristaExistente" value="#{motoristaView.motorista.dataUltimaPosicao}">
+				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+			</h:inputHidden>
+			<h:inputHidden id="nomeMotoristaExistente" value="#{motoristaView.motorista.nome}" />
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Desautorizar</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo da Não Autorização*:</label>
+				          					<h:inputTextarea id="motivoDesautorizacao" value="#{motoristaView.motivoDesautorizacao}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Confirmar Desautorização"
+			            			process="@this,motivoDesautorizacao"
+			            			update="mensagens motoristaTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{motoristaView.desautorizarMotorista()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheExclusaoDefinitivo" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoDefinitivoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusaoDefinitivo">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão Definitiva</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Deseja Excluir definitivamente o Motorista? 
+				          					Caso o motorista seja permissionário ou particular, seu veículo também será excluído. Todas as corridas e entregas realizadas por esse motorista também serão apagadas.</label>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Confirmar Exclusão Definitiva"
+			            			process="@this"
+			            			update="mensagens motoristaTable"
+			            			oncomplete="fecharModalExclusaoDefinitivo()" 
+			            			action="#{motoristaView.excluirMotorista()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheBloqueio" tabindex="-1" role="dialog" aria-labelledby="myModalbloqueioLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheBloqueio">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Excluir</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					Deseja realmente bloquear temporariamente o motorista?
+				          				</div>
+				          				<div class="col-md-12">
+				          					<label>Motivo da Não Autorização*:</label>
+				          					<h:inputTextarea id="motivoBloqueio" value="#{motoristaView.motivoBloqueio}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Bloquear"
+			            			process="@this,motivoBloqueio"
+			            			update="mensagens motoristaTable"
+			            			oncomplete="fecharModalBloqueio()" 
+			            			action="#{motoristaView.bloquearMotorista()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalLocalizacao" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalLocalizacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Última Localização do Motorista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				
+				          				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
+								    		<pr:commandLink
+								    			styleClass="btn btn-primary"
+								    			process="@this"
+								    			immediate="true"
+								    			oncomplete="definirNovaLocalizacao()"
+												action="#{motoristaView.atualizarLocalizacaoMotorista()}"
+												update="latitudeMotoristaExistente longitudeMotoristaExistente dataMotoristaExistente nomeMotoristaExistente dataFinal longitudeFinal latitudeFinal"> <i class="fa fa-refresh"></i> Atualizar Posição
+								    		</pr:commandLink>
+								    	</div>
+				          			
+				          				<div class="col-md-12">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap" style="height: 350px;"></div>
+				          				</div>
+				          				<br />
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Latitude:</label>
+				          					<h:inputText id="latitudeFinal" disabled="true" styleClass="latitudeMotorista form-control" value="#{motoristaView.motorista.latitudeCorrente}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Longitude:</label>
+				          					<h:inputText id="longitudeFinal" disabled="true" styleClass="longitudeMotorista form-control" value="#{motoristaView.motorista.longitudeCorrente}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Data Última Localização:</label>
+				          					<h:inputText id="dataFinal" disabled="true" styleClass="dataCorrenteMotorista form-control" value="#{motoristaView.motorista.dataUltimaPosicao}">
+				          						<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+				          					</h:inputText>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalhePermissionarios" tabindex="-1" role="dialog" aria-labelledby="modalDetalhePermissionariosLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalDetalhePermissionarios">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Auxiliares</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					<label>Motorista Permissionário:</label><br />
+				          					<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motorista.nome}" />
+				          				</div>
+				          				<br />
+				          				<div class="col-md-12 no-padding table-responsive" style="margin-top: 20px;">
+							        		<pr:dataTable 
+												emptyMessage="Nenhum auxiliar cadastrado."
+												id="auxiliarTable" 
+												var="auxiliar" 
+												rows="10"
+												rowIndexVar="auxiliarRow" 
+												value="#{motoristaView.auxiliares}"
+												tableStyleClass="table table-striped"
+												style="border: 0px solid black !important;"
+												tableStyle="border: 0px solid black !important;"
+												paginator="true"
+												lazy="true"
+												paginatorAlwaysVisible="true"
+												paginatorPosition="bottom"
+												paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+								               	rowsPerPageTemplate="5,10,15,20,50,100">
+												<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+													<h:outputText value="#{auxiliarRow + 1}" />
+												</pr:column>
+												<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 250px;">
+													<h:outputText value="#{auxiliar.nome}" />
+												</pr:column>
+												<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 300px;">
+													<h:outputText value="#{auxiliar.email}" />
+												</pr:column>
+												<pr:column headerText="CPF" style="text-align: left; font-size: 85%; width: 155px;">
+													<h:outputText value="#{auxiliar.cpf}" />
+												</pr:column>
+											</pr:dataTable>
+										</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheAuxiliares" tabindex="-1" role="dialog" aria-labelledby="modalDetalheAuxiliaresLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalDetalheAuxiliares">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Permissionários</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					<label>Motorista Auxiliar:</label><br />
+				          					<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motorista.nome}" />
+				          				</div>
+				          				<br />
+				          				<div class="col-md-12 no-padding table-responsive" style="margin-top: 20px;">
+							        		<pr:dataTable 
+												emptyMessage="Nenhum permissionário atrelado ao auxiliar."
+												id="permissionarioTable" 
+												var="permissionario" 
+												rows="10"
+												rowIndexVar="permissionarioRow" 
+												value="#{motoristaView.permissionarios}"
+												tableStyleClass="table table-striped"
+												style="border: 0px solid black !important;"
+												tableStyle="border: 0px solid black !important;"
+												paginator="true"
+												lazy="true"
+												paginatorAlwaysVisible="true"
+												paginatorPosition="bottom"
+												paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+								               	rowsPerPageTemplate="5,10,15,20,50,100">
+												<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+													<h:outputText value="#{permissionarioRow + 1}" />
+												</pr:column>
+												<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 250px;">
+													<h:outputText value="#{permissionario.nome}" />
+												</pr:column>
+												<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 300px;">
+													<h:outputText value="#{permissionario.login}" />
+												</pr:column>
+												<pr:column headerText="Celular" style="text-align: left; font-size: 85%; width: 155px;">
+													<h:outputText value="#{permissionario.celular}" />
+												</pr:column>
+											</pr:dataTable>
+										</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheMotorista">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Motorista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+						     				<t:div styleClass="row" rendered="#{motoristaView.motorista.dataMotoristaVencida}" style="padding-left: 10px; padding-right: 10px; margin-top: 10px;">
+												<t:div class="alert alert-danger">
+													<h3><i class="fa fa-times"></i> Atenção!</h3>
+													A Carteira do Motorista está vencida!
+							                    </t:div>
+											</t:div>
+											<t:div styleClass="row" rendered="#{motoristaView.motorista.dataMotoristaVencida}" style="padding-left: 10px; padding-right: 10px; margin-top: 10px;">
+												<t:div class="alert alert-danger">
+													<h3><i class="fa fa-times"></i> Atenção!</h3>
+													A Carteira do Taxista está vencida!
+							                    </t:div>
+											</t:div>
+				          				</div>
+				          				<div class="col-md-6" style="clear: both;">
+						        			<label>Data de Cadastro:</label><br />
+						        			<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motorista.dataCadastro}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:inputText>
+						        			<br /><br />
+						        			<label>Data da Última Posição:</label><br />
+						        			<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motorista.dataUltimaPosicao}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="text-align: center;">
+						        			<label>Selfie:</label><br />
+						        			<img id="imgSelfie" src="#{motoristaView.motorista.selfie}" title="Selfie" style="width: 200px; cursor:pointer;" onclick="abrirModalImg('imgSelfie')" />
+										</div>
+										<br />
+					              		<div class="col-md-12" style="margin-top: 10px;">
+						        			<label>Nome:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Nome" value="#{motoristaView.motorista.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12">
+						        			<label>Nome da Mãe:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Nome da Mãe" value="#{motoristaView.motorista.nomeMae}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome da Mãe" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>CPF:</label>
+						        			<h:inputText disabled="true" styleClass="form-control cpf" label="CPF" value="#{motoristaView.motorista.cpf}">
+						        				<f:passThroughAttribute name="placeholder" value="CPF" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Data de Nascimento:</label>
+						        			<h:inputText disabled="true" styleClass="form-control data date-picker" label="Data de Nascimento" value="#{motoristaView.motorista.dataNascimento}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Nascimento" />
+						        				<f:convertDateTime pattern="dd/MM/yyyy" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Cidade:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Cidade" value="#{motoristaView.motorista.cidadeMotorista}">
+						        				<f:passThroughAttribute name="placeholder" value="Cidade" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>UF:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="UF" value="#{motoristaView.motorista.siglaUf}">
+						        				<f:passThroughAttribute name="placeholder" value="UF" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Status:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Status" value="#{motoristaView.motorista.descricaoStatus}">
+						        				<f:passThroughAttribute name="placeholder" value="Status" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Celular:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Celular" value="#{motoristaView.motorista.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Forma de Recebimento:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.formaRecebimento and motoristaView.motorista.formaRecebimento eq 2}" value="Na SEG Rastreadores" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.formaRecebimento and motoristaView.motorista.formaRecebimento eq 1}" value="Via Depósito Bancário" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty motoristaView.motorista.formaRecebimento}" value="Não definido" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Banco:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Banco" value="#{motoristaView.motorista.banco}">
+						        				<f:passThroughAttribute name="placeholder" value="Banco" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Agência:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Agência" value="#{motoristaView.motorista.agencia}">
+						        				<f:passThroughAttribute name="placeholder" value="Agência" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Conta Corrente:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Conta Corrente" value="#{motoristaView.motorista.contaCorrente}">
+						        				<f:passThroughAttribute name="placeholder" value="Conta Corrente" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Operação:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Operação" value="#{motoristaView.motorista.operacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Operação" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Possui Maquininha de Débito?</label>
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.indicadorMaquinaDebito and motoristaView.motorista.indicadorMaquinaDebito eq 1}" value="Sim" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty motoristaView.motorista.indicadorMaquinaDebito or motoristaView.motorista.indicadorMaquinaDebito ne 1}" value="Não" />
+										</div>
+										<div class="col-md-6">
+						        			<label>Empresa de Tele-Táxi:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.tipoTeleTaxi and motoristaView.motorista.tipoTeleTaxi eq 1}" value="Ligue-Táxi" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.tipoTeleTaxi and motoristaView.motorista.tipoTeleTaxi eq 2}" value="Tele-Táxi" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.tipoTeleTaxi and motoristaView.motorista.tipoTeleTaxi eq 3}" value="Ligue-Táxi e Tele-Táxi" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty motoristaView.motorista.tipoTeleTaxi or motoristaView.motorista.tipoTeleTaxi eq 0}" value="Nenhuma" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Aceita Voucher?</label>
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{not empty motoristaView.motorista.indicadorAceitaVoucher and motoristaView.motorista.indicadorAceitaVoucher eq 1}" value="Sim" />
+						        			<h:inputText disabled="true" styleClass="form-control" rendered="#{empty motoristaView.motorista.indicadorAceitaVoucher or motoristaView.motorista.indicadorAceitaVoucher ne 1}" value="Não" />
+										</div>
+										<div class="col-md-6"></div>
+										
+										<t:div rendered="#{not empty motoristaView.motorista.indicadorParticular and motoristaView.motorista.indicadorParticular eq 1}">
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Carteira de Motorista:</label>
+												<h:inputText disabled="true" styleClass="form-control" label="Carteira de Motorista" value="#{motoristaView.motorista.carteira}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Vencimento Carteira de Motorista:</label>
+												<h:inputText disabled="true" styleClass="form-control data date-picker" label="Vencimento Carteira de Motorista" value="#{motoristaView.motorista.dataVencimentoMotorista}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-12" style="text-align: center;">
+							        			<label>Carteira de Motorista:</label><br />
+							        			<img src="#{motoristaView.motorista.imagemCarteira}" style="width: 300px;" title="Carteira" class="img" />
+											</div>
+										</t:div>
+										<t:div rendered="#{empty motoristaView.motorista.indicadorParticular or motoristaView.motorista.indicadorParticular ne 1}">
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Carteira de Motorista:</label>
+												<h:inputText disabled="true" styleClass="form-control" label="Carteira de Motorista" value="#{motoristaView.motorista.carteira}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Carteira de Taxista:</label>
+												<h:inputText disabled="true" styleClass="form-control" label="Carteira de Taxista" value="#{motoristaView.motorista.carteiraTaxista}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Taxista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Vencimento Carteira de Motorista:</label>
+												<h:inputText disabled="true" styleClass="form-control data date-picker" label="Vencimento Carteira de Motorista" value="#{motoristaView.motorista.dataVencimentoMotorista}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Vencimento Carteira de Taxista:</label>
+												<h:inputText disabled="true" styleClass="form-control data date-picker" label="Vencimento Carteira de Taxista" value="#{motoristaView.motorista.dataVencimentoTaxi}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Taxista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-6" style="text-align: center;">
+							        			<label>Carteira de Motorista:</label><br />
+							        			<img id="imgCarteira" src="#{motoristaView.motorista.imagemCarteira}" style="width: 300px; cursor: pointer;" title="Carteira" onclick="abrirModalImg('imgCarteira')" />
+											</div>
+											<div class="col-md-6" style="text-align: center;">
+							        			<label>Carteira de Motorista de Táxi:</label><br />
+							        			<img id="imgCarteiraTaxista" src="#{motoristaView.motorista.imagemCarteiraTaxista}" style="width: 300px; cursor: pointer;" title="Carteira de Taxista" onclick="abrirModalImg('imgCarteiraTaxista')" />
+											</div>
+										</t:div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-danger" 
+				            			rendered="#{motoristaView.motorista.status eq 1}"
+				            			value="Negar Autorização do Motorista" 
+				            			update="panelModalDetalheExclusao"
+				            			onclick="exibirExcluirMotorista()">
+				            			<f:setPropertyActionListener value="#{null}" target="#{motoristaView.motivoDesautorizacao}" />
+				            		</pr:commandLink>
+				            		
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{motoristaView.motorista.status eq 1}"
+				            			value="Autorizar Motorista" 
+				            			action="#{motoristaView.autorizarMotorista()}" />
+				            			
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-danger" 
+				            			rendered="#{motoristaView.motorista.status eq 2}"
+				            			value="Bloquear Motorista" 
+				            			update="panelModalDetalheBloqueio"
+				            			onclick="exibirBloquearMotorista()">
+				            			<f:setPropertyActionListener value="#{null}" target="#{motoristaView.motivoBloqueio}" />
+				            		</pr:commandLink>
+				            			
+			            			<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{motoristaView.motorista.status eq 5}"
+				            			value="Desbloquear Motorista" 
+				            			action="#{motoristaView.desbloquearMotorista}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalDetalheAlterar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheMotoristaAlterar">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Motorista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+						     				<t:div styleClass="row" rendered="#{motoristaView.motoristaAlterar.dataMotoristaVencida}" style="padding-left: 10px; padding-right: 10px; margin-bottom: 10px;">
+												<t:div class="alert alert-danger">
+													<h3><i class="fa fa-times"></i> Atenção!</h3>
+													A Carteira do Motorista está vencida!
+							                    </t:div>
+											</t:div>
+											<t:div styleClass="row" rendered="#{motoristaView.motoristaAlterar.dataMotoristaVencida}" style="padding-left: 10px; padding-right: 10px; margin-bottom: 10px;">
+												<t:div class="alert alert-danger">
+													<h3><i class="fa fa-times"></i> Atenção!</h3>
+													A Carteira do Taxista está vencida!
+							                    </t:div>
+											</t:div>
+				          				</div>
+				          				<div class="col-md-6">
+						        			<label>Data de Cadastro:</label><br />
+						        			<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motoristaAlterar.dataCadastro}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:inputText>
+						        			<br /><br />
+						        			<label>Data da Última Posição:</label><br />
+						        			<h:inputText disabled="true" styleClass="form-control" value="#{motoristaView.motoristaAlterar.dataUltimaPosicao}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="text-align: center;">
+						        			<label>Selfie:</label><br />
+						        			<img id="imgSelfieAlterar" src="#{motoristaView.motoristaAlterar.selfie}" title="Selfie" style="width: 200px; cursor: pointer;" class="img" onclick="abrirModalImg('imgSelfieAlterar')" />
+										</div>
+										<br />
+					              		<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Nome:</label>
+						        			<h:inputText id="nomeAlterar" styleClass="form-control" label="Nome" value="#{motoristaView.motoristaAlterar.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>E-mail:</label>
+						        			<h:inputText id="emailAlterar" styleClass="form-control" label="E-mail" value="#{motoristaView.motoristaAlterar.email}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-3" style="margin-top: 10px;">
+						        			<label>CEP:</label>
+						        			<h:inputText id="cepAlterar" styleClass="form-control cep" label="CEP" value="#{motoristaView.motoristaAlterar.cep}">
+						        				<f:passThroughAttribute name="placeholder" value="CEP" />
+						        			</h:inputText>
+										</div>
+					              		<div class="col-md-9" style="margin-top: 10px;">
+						        			<label>Endereço:</label>
+						        			<h:inputText id="enderecoAlterar" styleClass="form-control" label="Endereço" value="#{motoristaView.motoristaAlterar.endereco}">
+						        				<f:passThroughAttribute name="placeholder" value="Endereço" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>CPF:</label>
+						        			<h:inputText id="cpfAlterar" styleClass="form-control cpf" label="CPF" value="#{motoristaView.motoristaAlterar.cpf}">
+						        				<f:passThroughAttribute name="placeholder" value="CPF" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Data de Nascimento:</label>
+						        			<h:inputText id="dataNascimentoAlterar" styleClass="form-control data date-picker" label="Data de Nascimento" value="#{motoristaView.motoristaAlterar.dataNascimento}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Nascimento" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Cidade:</label>
+						        			<h:inputText id="cidadeAlterar" styleClass="form-control" label="Cidade" value="#{motoristaView.motoristaAlterar.cidadeMotorista}">
+						        				<f:passThroughAttribute name="placeholder" value="Cidade" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>UF:</label>
+						        			<h:inputText id="ufAlterar" maxlength="2" styleClass="form-control" label="UF" value="#{motoristaView.motoristaAlterar.siglaUf}">
+						        				<f:passThroughAttribute name="placeholder" value="UF" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Status:</label>
+						        			<h:selectOneMenu 
+												id="statusAlterar"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.motoristaAlterar.status}" 
+												label="Status"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{motoristaView.listaStatusMotorista}" 
+															   var="status"
+															   itemLabel="#{status.descricao}"
+															   itemValue="#{status.status}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Celular:</label>
+						        			<h:inputText id="celularAlterar" styleClass="form-control" label="Celular" value="#{motoristaView.motoristaAlterar.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Banco:</label>
+						        			<h:inputText id="bancoAlterar" styleClass="form-control" label="Banco" value="#{motoristaView.motoristaAlterar.banco}">
+						        				<f:passThroughAttribute name="placeholder" value="Banco" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Agência:</label>
+						        			<h:inputText id="agenciaAlterar" styleClass="form-control" label="Banco" value="#{motoristaView.motoristaAlterar.agencia}">
+						        				<f:passThroughAttribute name="placeholder" value="Agência" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Conta Corrente:</label>
+						        			<h:inputText id="contaAlterar" styleClass="form-control" label="Conta Corrente" value="#{motoristaView.motoristaAlterar.contaCorrente}">
+						        				<f:passThroughAttribute name="placeholder" value="Conta Corrente" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Operação:</label>
+						        			<h:inputText id="operacaoAlterar" styleClass="form-control" label="Operação" value="#{motoristaView.motoristaAlterar.operacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Operação" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Possui Maquininha de Débito?</label>
+						        			<h:selectOneMenu 
+												id="maquinaDebitoAlterar"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.motoristaAlterar.indicadorMaquinaDebito}" 
+												label="Possui Máquina de Débito"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Possui" itemValue="1" />
+												<f:selectItem itemLabel="Não Possui" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Empresa de Tele-Táxi:</label>
+						        			<h:selectOneMenu 
+												id="teleTaxiAlterar"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.motoristaAlterar.tipoTeleTaxi}" 
+												label="Empresa de Tele-Táxi"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Nenhuma" itemValue="0" />
+												<f:selectItem itemLabel="Ligue-Táxi" itemValue="1" />
+												<f:selectItem itemLabel="Tele-Táxi" itemValue="2" />
+												<f:selectItem itemLabel="Ligue-Táxi e Tele-Táxi" itemValue="3" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Aceita Voucher?</label>
+						        			<h:selectOneMenu 
+												id="aceitaVoucherAlterar"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.motoristaAlterar.indicadorAceitaVoucher}" 
+												label="Aceita Voucher"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Aceita" itemValue="1" />
+												<f:selectItem itemLabel="Não Aceita" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6"></div>
+										
+										<t:div rendered="#{not empty motoristaView.motoristaAlterar.indicadorParticular and motoristaView.motoristaAlterar.indicadorParticular eq 1}">
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Carteira de Motorista:</label>
+												<h:inputText id="carteiraParticularAlterar" styleClass="form-control" label="Carteira de Motorista" value="#{motoristaView.motoristaAlterar.carteira}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Vencimento Carteira de Motorista:</label>
+												<h:inputText id="vencimentoCarteiraParticularAlterar" styleClass="form-control data date-picker" label="Vencimento Carteira de Motorista" value="#{motoristaView.motoristaAlterar.dataVencimentoMotorista}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-12" style="text-align: center; clear: both;">
+							        			<label>Carteira de Motorista:</label><br />
+							        			<img src="#{motoristaView.motoristaAlterar.imagemCarteira}" style="width: 300px;" title="Carteira" class="img" />
+											</div>
+										</t:div>
+										<t:div rendered="#{empty motoristaView.motoristaAlterar.indicadorParticular or motoristaView.motoristaAlterar.indicadorParticular ne 1}">
+											
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Carteira de Motorista:</label>
+												<h:inputText id="carteiraMotoristaAlterar" styleClass="form-control" label="Carteira de Motorista" value="#{motoristaView.motoristaAlterar.carteira}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Carteira de Taxista:</label>
+												<h:inputText id="carteiraTaxistaAlterar" styleClass="form-control" label="Carteira de Taxista" value="#{motoristaView.motoristaAlterar.carteiraTaxista}">
+						        					<f:passThroughAttribute name="placeholder" value="Carteira de Taxista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-6" style="clear: both; margin-top: 10px;">
+												<label>Vencimento Carteira de Motorista:</label>
+												<h:inputText id="vencimentoCarteiraMotoristaAlterar" styleClass="form-control data date-picker" label="Vencimento Carteira de Motorista" value="#{motoristaView.motoristaAlterar.dataVencimentoMotorista}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Motorista" />
+						        				</h:inputText>
+											</div>
+											<div class="col-md-6" style="margin-top: 10px;">
+												<label>Vencimento Carteira de Taxista:</label>
+												<h:inputText id="vencimentoCarteiraTaxistaAlterar" styleClass="form-control data date-picker" label="Vencimento Carteira de Taxista" value="#{motoristaView.motoristaAlterar.dataVencimentoTaxi}">
+						        					<f:passThroughAttribute name="placeholder" value="Vencimento Carteira de Taxista" />
+						        				</h:inputText>
+											</div>
+											<br />
+											<div class="col-md-6" style="text-align: center; clear: both; margin-top: 10px;">
+							        			<label>Carteira de Motorista:</label><br />
+							        			<img id="imgCarteiraAlterar" src="#{motoristaView.motoristaAlterar.imagemCarteira}" style="width: 300px; cursor: pointer;" title="Carteira" onclick="abrirModalImg('imgCarteiraAlterar')" />
+											</div>
+											<div class="col-md-6" style="text-align: center; margin-top: 10px;">
+							        			<label>Carteira de Motorista de Táxi:</label><br />
+							        			<img id="imgCarteiraTaxistaAlterar" src="#{motoristaView.motoristaAlterar.imagemCarteiraTaxista}" style="width: 300px; cursor: pointer;" title="Carteira de Taxista" onclick="abrirModalImg('imgCarteiraTaxistaAlterar')" />
+											</div>
+										</t:div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary" 
+				            			value="Alterar Dados de Motorista"
+				            			process="@this,nomeAlterar,operacaoAlterar,celularAlterar,emailAlterar,cepAlterar,enderecoAlterar,contaAlterar,agenciaAlterar,bancoAlterar,cpfAlterar,dataNascimentoAlterar,aceitaVoucherAlterar,cidadeAlterar,ufAlterar,statusAlterar,maquinaDebitoAlterar,teleTaxiAlterar,carteiraParticularAlterar,vencimentoCarteiraParticularAlterar,carteiraMotoristaAlterar,carteiraTaxistaAlterar,vencimentoCarteiraMotoristaAlterar,vencimentoCarteiraTaxistaAlterar"
+				            			update="mensagens motoristaTable"
+				            			oncomplete="fecharModalDetalheAlterar()" 
+				            			action="#{motoristaView.alterarMotorista()}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalAlterarSenha" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalAlterarSenha">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Alterar Senha de Motorista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Nova Senha*:</label>
+						        			<h:inputText id="senhaNova" styleClass="form-control" label="Nova Senha" value="#{motoristaView.novaSenha}">
+						        				<f:passThroughAttribute name="placeholder" value="Nova Senha" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Confirmação da Senha*:</label>
+						        			<h:inputText id="confirmacaoSenhaNova" styleClass="form-control" label="Confirmação da Senha" value="#{motoristaView.confirmacaoSenha}">
+						        				<f:passThroughAttribute name="placeholder" value="Confirmação da Senha" />
+						        			</h:inputText>
+										</div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary" 
+				            			value="Alterar Senha do Motorista"
+				            			process="@this,senhaNova,confirmacaoSenhaNova"
+				            			update="mensagens motoristaTable"
+				            			oncomplete="fecharModalAlterarSenha()" 
+				            			action="#{motoristaView.alterarSenhaMotorista()}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{motoristaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{motoristaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!motoristaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<t:div id="filtroPesquisa" styleClass="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Nome do Motorista:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Motorista" 
+						        				value="#{motoristaView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Motorista" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Status do Motorista:</label>
+											<h:selectOneMenu 
+												id="statusPesquisa"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.filtro.status}" 
+												label="Status"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{motoristaView.listaStatusMotorista}" 
+															   var="status"
+															   itemLabel="#{status.descricao}"
+															   itemValue="#{status.status}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>CPF:</label>
+						        			<h:inputText id="cpfPesquisa" styleClass="form-control cpf" label="CPF" value="#{motoristaView.filtro.cpf}">
+						        				<f:passThroughAttribute name="placeholder" value="CPF" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>RG:</label>
+						        			<h:inputText id="rgPesquisa" styleClass="form-control" label="RG" value="#{motoristaView.filtro.rg}">
+						        				<f:passThroughAttribute name="placeholder" value="RG" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Celular:</label>
+						        			<h:inputText id="celularPesquisa" styleClass="form-control cel" label="Celular" value="#{motoristaView.filtro.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Cidade:</label>
+						        			<h:inputText id="cidadePesquisa" styleClass="form-control" label="Cidade" value="#{motoristaView.filtro.cidadeMotorista}">
+						        				<f:passThroughAttribute name="placeholder" value="Cidade" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Empresa do Motorista:</label>
+											<h:selectOneMenu 
+												id="empresaPesquisa"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.filtro.tipoTeleTaxi}" 
+												label="Empresa do Motorista"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ligue-Táxi" itemValue="1" />
+												<f:selectItem itemLabel="Tele-Táxi" itemValue="2" />
+												<f:selectItem itemLabel="Ligue-Táxi e Tele-Táxi" itemValue="3" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Tipo de Motorista:</label>
+											<h:selectOneMenu 
+												id="tipoMotoristaPesquisa"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.filtro.tipoMotorista}" 
+												label="Tipo de Motorista"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Permissionário" itemValue="1" />
+												<f:selectItem itemLabel="Auxiliar" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Versão do App:</label>
+						        			<h:inputText id="versaoPesquisa" styleClass="form-control" label="Versão do App" value="#{motoristaView.filtro.versaoApp}">
+						        				<f:passThroughAttribute name="placeholder" value="Versão do App" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="padding-top: 10px;">
+						        			<label>Cidade de Trabalho:</label>
+											<h:selectOneMenu 
+												id="cidadeTrabalhoPesquisa"
+				        						styleClass="form-control"
+				        						value="#{motoristaView.filtro.cidade}" 
+												label="Cidade"
+												style="height: 42px;"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{motoristaView.listaCidade}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome} - #{cidade.siglaUf}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa rgPesquisa cidadeTrabalhoPesquisa tipoMotoristaPesquisa empresaPesquisa statusPesquisa cpfPesquisa cidadePesquisa celularPesquisa motoristaTable mensagens"
+						        				action="#{motoristaView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{motoristaView.pesquisarMotoristaPorFiltro()}"
+						        				update="motoristaTable"
+						        				process="@this,nomePesquisa,cidadeTrabalhoPesquisa,versaoPesquisa,tipoMotoristaPesquisa,empresaPesquisa,statusPesquisa,celularPesquisa,rgPesquisa,cpfPesquisa,cidadePesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</t:div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="motoristaTable" 
+											var="motorista" 
+											rows="10"
+											rowIndexVar="motoristaRow" 
+											value="#{motoristaView.motoristaDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{motoristaRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 240px;">
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotorista(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Desautorizar Motorista"
+													oncomplete="exibirExcluirMotorista();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-minus-circle"></span>
+												</pr:commandLink>												
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotorista(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar Motorista"
+													oncomplete="exibirDetalhesMotorista();" 
+													update="panelModalDetalheMotorista"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotoristaAlterar(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Alterar Dados de Motorista"
+													oncomplete="exibirDetalhesMotoristaAlterar();" 
+													update="panelModalDetalheMotoristaAlterar"
+													process="@this">
+													<span class="fa fa-edit"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotorista(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Visualizar Última Localização"
+													oncomplete="exibirLocalizacaoMotorista();" 
+													rendered="#{not empty motorista.latitudeCorrente}"
+													update="panelModalLocalizacao latitudeMotoristaExistente longitudeMotoristaExistente dataMotoristaExistente nomeMotoristaExistente"
+													process="@this">
+													<span class="fa fa-map-marker"></span>
+												</pr:commandLink>
+												<h:commandLink 
+													action="#{motoristaView.carregarVeiculos(motorista)}" 
+													rendered="#{(not empty motorista.indicadorPermissionario and motorista.indicadorPermissionario eq 1) or (not empty motorista.indicadorParticular and motorista.indicadorParticular eq 1)}"
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Veículo Dirigido por #{motorista.nome}"
+													process="@this">
+													<span class="fa fa-car"></span>
+												</h:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotoristaAuxiliares(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Visualizar Auxiliares"
+													rendered="#{not empty motorista.indicadorPermissionario and motorista.indicadorPermissionario eq 1}"
+													oncomplete="exibirDetalhesPermissionarios();" 
+													update="panelModalDetalhePermissionarios"
+													process="@this">
+													<span class="fa fa-users"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotoristaPermissionarios(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Visualizar Permissionários"
+													rendered="#{not empty motorista.indicadorAuxiliar and motorista.indicadorAuxiliar eq 1}"
+													oncomplete="exibirDetalhesAuxiliares();" 
+													update="panelModalDetalheAuxiliares"
+													process="@this">
+													<span class="fa fa-users"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotorista(motorista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Excluir Motorista"
+													oncomplete="exibirExcluirDefinitivoMotorista();" 
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{motoristaView.carregarMotorista(motorista)}" 
+													style="color: #70B9B0;" 
+													title="Alterar Senha de Motorista"
+													oncomplete="exibirAlterarSenha();" 
+													process="@this">
+													<span class="fa fa-key"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{motorista.nome}" />
+											</pr:column>
+											<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{motorista.email}" />
+											</pr:column>
+											<pr:column headerText="Celular" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{motorista.celular}" />
+											</pr:column>
+											<pr:column headerText="CPF" style="text-align: left; font-size: 85%; width: 155px;">
+												<h:outputText value="#{motorista.cpf}" />
+											</pr:column>
+											<pr:column headerText="Cidade de Trab." style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{motorista.cidade.nome} - #{motorista.cidade.siglaUf}" />
+											</pr:column>
+											<pr:column headerText="CEP" style="text-align: left; font-size: 85%; width: 155px;">
+												<h:outputText value="#{motorista.cep}" />
+											</pr:column>
+											<pr:column headerText="Endereço" style="text-align: left; font-size: 85%; width: 255px; white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">
+												<h:outputText value="#{motorista.endereco}" />
+											</pr:column>
+											<pr:column headerText="Banco" style="text-align: left; font-size: 85%; width: 200px; white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">
+												<h:outputText value="#{motorista.banco}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Agência" style="text-align: left; font-size: 85%; width: 200px; white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">
+												<h:outputText value="#{motorista.agencia}" />
+											</pr:column>
+											<pr:column headerText="Agencia" style="text-align: left; font-size: 85%; width: 0px;">
+												<h:outputText value="#{motorista.agencia}" />
+											</pr:column>
+											<pr:column headerText="Conta Corrente" style="text-align: left; font-size: 85%; width: 200px; white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">
+												<h:outputText value="#{motorista.contaCorrente}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Operação" style="text-align: left; font-size: 85%; width: 200px; white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">
+												<h:outputText value="#{motorista.operacao}" />
+											</pr:column>
+											<pr:column headerText="Operacao" style="text-align: left; font-size: 85%; width: 0px;">
+												<h:outputText value="#{motorista.operacao}" />
+											</pr:column>
+											<pr:column headerText="Versão App" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{motorista.versaoApp}" />
+											</pr:column>
+											<pr:column headerText="Última Posição" style="text-align: left; font-size: 85%; width: 220px;">
+												<h:outputText value="#{motorista.dataUltimaPosicao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Tipo" style="text-align: left; font-size: 85%; width: 130px;">
+												<h:outputText rendered="#{not empty motorista.indicadorPermissionario and motorista.indicadorPermissionario == 1}" value="Permissionário" />
+												<h:outputText rendered="#{not empty motorista.indicadorParticular and motorista.indicadorParticular == 1}" value="Particular" />
+												<h:outputText rendered="#{not empty motorista.indicadorAuxiliar and motorista.indicadorAuxiliar == 1}" value="Auxiliar" />
+											</pr:column>
+											<pr:column headerText="Empresa" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText rendered="#{not empty motorista.tipoTeleTaxi and motorista.tipoTeleTaxi eq 1}" value="Ligue-Táxi" />
+												<h:outputText rendered="#{not empty motorista.tipoTeleTaxi and motorista.tipoTeleTaxi eq 2}" value="Tele-Táxi" />
+												<h:outputText rendered="#{not empty motorista.tipoTeleTaxi and motorista.tipoTeleTaxi eq 3}" value="Ligue e Tele-Táxi" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{motorista.descricaoStatus}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Alertas" style="text-align: center; font-size: 85%; width: 110px;">
+												<t:htmlTag value="span" rendered="#{motorista.dataMotoristaVencida}" style="text-align: center; display: inline;"><i title="Carteira de Motorista Vencida" style="margin-right: 5px; color: red;" class="fa fa-warning"></i></t:htmlTag>
+												<t:htmlTag value="span" rendered="#{motorista.dataTaxistaVencida}" style="text-align: center; display: inline;"><i title="Carteira de Taxista Vencida" style="margin-right: 5px; color: red;" class="fa fa-warning"></i></t:htmlTag>
+											</pr:column>
+											<pr:column headerText="Alertas" style="text-align: center; font-size: 85%; width: 0px;">
+												<h:outputText rendered="#{motorista.dataMotoristaVencida}" value="Carteira de Motorista Vencida" />
+												|
+												<h:outputText rendered="#{motorista.dataTaxistaVencida}" value="Carteira de Taxista Vencida" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="motoristaTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="motoristaTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="motoristaTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script src="https://maps.google.com/maps/api/js?file=api&amp;v=3&amp;key=AIzaSyBqwOrp--K7rhl--mQvsdIqwSX4voNqR1g"></script>
+			
+			<script>
+			
+				var map;
+			 	var center;
+			 	var latitude;
+			 	var longitude;
+			
+				function fecharModalMotorista() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesMotorista() {
+					$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirMotorista() {
+					fecharModalMotorista();
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function exibirDetalhesPermissionarios() {
+					$('#modalDetalhePermissionarios').modal('show');
+				}
+				function exibirDetalhesAuxiliares() {
+					$('#modalDetalheAuxiliares').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function fecharModalLocalizacao() {
+					$('#modalLocalizacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirBloquearMotorista() {
+					fecharModalMotorista();
+					$('#modalDetalheBloqueio').modal('show');
+				}
+				function fecharModalBloqueio() {
+					$('#modalDetalheBloqueio').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function exibirExcluirDefinitivoMotorista() {
+					$('#modalDetalheExclusaoDefinitivo').modal('show');
+				}
+				
+				function fecharModalExclusaoDefinitivo() {
+					$('#modalDetalheExclusaoDefinitivo').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function exibirAlterarSenha() {
+					$('#modalAlterarSenha').modal('show');
+				}
+				
+				function fecharModalAlterarSenha() {
+					$('#modalAlterarSenha').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function exibirDetalhesMotoristaAlterar() {
+					
+					$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	        		$(".data").mask("99/99/9999");
+	        		$(".cpf").mask("999.999.999-99");
+	        		$(".cep").mask("99.999-999");
+					$('#modalDetalheAlterar').modal('show');
+				}
+				function fecharModalDetalheAlterar() {
+					$('#modalDetalheAlterar').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				$( document ).ready(function() {
+			 		
+				 	$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+					    google.maps.event.trigger(map, "resize");
+					    map.setCenter(center);
+					    
+					 	$('#latitudeFinal').val($('#latitudeMotoristaExistente').val());
+					 	$('#longitudeFinal').val($('#longitudeMotoristaExistente').val());
+					 	$('#dataFinal').val($('#dataMotoristaExistente').val());
+					});
+				 	
+			 	});
+				
+				function exibirLocalizacaoMotorista() {
+					
+					latitude = $('#latitudeMotoristaExistente').val();
+					longitude = $('#longitudeMotoristaExistente').val();
+					nomeMotorista = $('#nomeMotoristaExistente').val();
+					
+					center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+			        map = new google.maps.Map(document.getElementById('googleMap'), {
+			          zoom: 15,
+			          mapTypeId: google.maps.MapTypeId.ROADMAP,
+			          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+			        });
+			        
+			        marker = new google.maps.Marker({
+			          position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+			          map: map,
+			          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/taxi.png",
+			          title: nomeMotorista
+			        });
+			        
+			        $('#modalLocalizacao').modal('show');
+				    
+				}
+				
+				function definirNovaLocalizacao() {
+					
+					if ($('#latitudeMotoristaExistente').val() != null) {
+						
+						
+						if ($('#latitudeMotoristaExistente').val() != '') {
+							
+							if (map != null) {
+								latitude = $('#latitudeMotoristaExistente').val();
+								longitude = $('#longitudeMotoristaExistente').val();
+								center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+								
+								google.maps.event.trigger(map, "resize");
+							    map.setCenter(center);
+							    marker.setPosition(center);
+							    
+							 	$('#latitudeFinal').val($('#latitudeMotoristaExistente').val());
+							 	$('#longitudeFinal').val($('#longitudeMotoristaExistente').val());
+							 	$('#dataFinal').val($('#dataMotoristaExistente').val());
+							}
+							
+						}
+					}
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<pr:remoteCommand autoRun="true" actionListener="#{corridaView.chamarModal()}" />
+		
+			<h:inputHidden id="latitudeCorridaCorrente" value="#{corridaView.corrida.latitudeCorrente}" />
+			<h:inputHidden id="longitudeCorridaCorrente" value="#{corridaView.corrida.longitudeCorrente}" />
+			<h:inputHidden id="latitudeCorridaOrigem" value="#{corridaView.corrida.origemLatitude}" />
+			<h:inputHidden id="longitudeCorridaOrigem" value="#{corridaView.corrida.origemLongitude}" />
+			<h:inputHidden id="latitudeCorridaDestino" value="#{corridaView.corrida.destinoLatitude}" />
+			<h:inputHidden id="longitudeCorridaDestino" value="#{corridaView.corrida.destinoLongitude}" />
+			<h:inputHidden id="latitudesPercurso" value="#{corridaView.corrida.latitudesPercurso}" />
+			<h:inputHidden id="longitudesPercurso" value="#{corridaView.corrida.longitudesPercurso}" />
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheCorrida">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados da Corrida</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Data de Solicitação:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.dataSolicitacao}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:outputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Data de Finalização:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.dataFinalizacao}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+						        			</h:outputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Motorista:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.usuarioMotorista.nome}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Passageiro:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.usuario.nome}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Origem:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.origem}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Origem (Endereço):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.origemEndereco}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Destino:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.destino}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Destino (Endereço):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.destinoEndereco}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Previsão de Tempo de Corrida:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.previsaoCorrida}" /> minutos
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Tempo de Corrida:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.tempoCorridaFormatada}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Classificação da Corrida (Nota):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.classificacaoCorrida}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Classificação da Corrida (Texto):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.classificacaoDescricao}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Segundos Parados:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.segundosParados}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Distância Percorrida:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.distanciaPercorrida}" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Denúncia de Abuso (Tipo):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.tipoDenuncia}" />
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Denúncia de Abuso (Texto):</label><br />
+						        			<h:outputText value="#{corridaView.corrida.denuncia}" />
+										</div>
+										<br />
+										<t:div rendered="#{not empty corridaView.corrida.motivoCancelamento}" styleClass="col-md-12" style="clear: both; margin-top: 10px;">
+						        			<label>Motivo do Cancelamento:</label><br />
+											<h:outputText value="#{corridaView.corrida.motivoCancelamento}" />
+										</t:div>
+										<t:div rendered="#{not empty corridaView.corrida.motivoRecuperacao}" styleClass="col-md-12" style="clear: both; margin-top: 10px;">
+						        			<label>Motivo da Devolução/Recuperação:</label><br />
+											<h:outputText value="#{corridaView.corrida.motivoRecuperacao}" />
+										</t:div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-warning"
+			            			value="Visualizar Dados de Passageiro" 
+			            			action="#{corridaView.detalharPassageiro()}" />
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-warning"
+			            			value="Visualizar Dados de Motorista" 
+			            			action="#{corridaView.detalharMotorista()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalLocalizacao" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalLocalizacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Percurso da Corrida</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-6">
+				          					<label>Origem:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.origem}" />
+				          				</div>
+				          				<div class="col-md-6">
+				          					<label>Destino:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.destino}" />
+				          				</div>
+				          				<br />
+				          				<div class="col-md-6">
+				          					<label>Motorista:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.usuarioMotorista.nome}" />
+				          				</div>
+				          				<div class="col-md-6">
+				          					<label>Passageiro:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.usuario.nome}" />
+				          				</div>
+				          				<br />
+										<div class="col-md-6">
+						        			<label>Previsão de Tempo de Corrida:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.previsaoCorrida} minutos" />
+										</div>
+										<div class="col-md-6">
+						        			<label>Tempo de Corrida:</label><br />
+						        			<h:outputText value="#{corridaView.corrida.tempoCorrida} minutos" />
+										</div>
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap2" style="height: 350px;"></div>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalCorridaVisualizacoes" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	
+				        	<h:panelGroup id="panelModalVisualizacao">
+				        	
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Visualizações da Corrida</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-6">
+				          					<label>Origem:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.origem}" />
+				          				</div>
+				          				<div class="col-md-6">
+				          					<label>Destino:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.destino}" />
+				          				</div>
+				          				
+				          				<br />
+				          				<div class="col-md-6">
+				          					<label>Motorista:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.usuarioMotorista.nome}" />
+				          				</div>
+				          				<div class="col-md-6">
+				          					<label>Passageiro:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.nomePassageiro}" rendered="#{not empty corridaView.corrida.nomePassageiro}" />
+											<h:outputText value="#{corridaView.corrida.usuario.nome}" rendered="#{empty corridaView.corrida.nomePassageiro}" />
+				          				</div>
+				          				<br />
+				          				<div class="col-md-6" style="clear: both;">
+				          					<label>Data da Solicitação:</label><br />
+				          					<h:outputText value="#{corridaView.corrida.dataSolicitacao}">
+												<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+											</h:outputText>
+										</div>
+				          				<br />
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<div id="googleMap3" style="height: 200px;"></div>
+				          				</div>
+				          				<br />
+				          				<div class="col-md-12">
+					          				<div class="no-padding table-responsive" style="margin-top: 20px;">
+								        		<pr:dataTable 
+													emptyMessage="Nenhum registro ainda de visualizações da corrida."
+													id="visualizacoesTable" 
+													var="visualizacao" 
+													rows="10"
+													rowIndexVar="visualizacaoRow" 
+													value="#{corridaView.visualizacoes}"
+													tableStyleClass="table table-striped card-table"
+													style="border: 0px solid black !important;"
+													tableStyle="border: 0px solid black !important;"
+													paginator="true"
+													lazy="false"
+													paginatorAlwaysVisible="true"
+													paginatorPosition="bottom"
+													paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+									               	rowsPerPageTemplate="5,10,15,20,50,100">
+													<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 20px;">
+														<h:outputText value="#{visualizacaoRow + 1}" />
+													</pr:column>
+													<pr:column headerText="Motorista" style="text-align: left; font-size: 85%; width: 200px;">
+														<h:outputText value="#{visualizacao.nomeMotorista}" />
+													</pr:column>
+													<pr:column headerText="Unidade" style="text-align: center; font-size: 85%; width: 100px;">
+														<h:outputText value="#{visualizacao.unidadeVeiculo}" />
+													</pr:column>
+													<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 130px;">
+														<h:outputText value="#{visualizacao.placaVeiculo}" />
+													</pr:column>
+													<pr:column headerText="PA" style="text-align: left; font-size: 85%; width: 150px;">
+														<h:outputText value="#{visualizacao.pontoApoio}" />
+													</pr:column>
+													<pr:column headerText="Visualização" style="text-align: left; font-size: 85%; width: 150px;">
+														<h:outputText value="#{visualizacao.dataVisualizacao}">
+															<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+														</h:outputText>
+													</pr:column>
+													<pr:column headerText="Entrou no PA" style="text-align: left; font-size: 85%; width: 180px;">
+														<h:outputText value="#{visualizacao.dataEntrouPA}">
+															<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+														</h:outputText>
+													</pr:column>
+													<pr:column headerText="Últ. Posição" style="text-align: left; font-size: 85%; width: 170px;">
+														<h:outputText value="#{visualizacao.dataUltimaPosicao}">
+															<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+														</h:outputText>
+													</pr:column>
+													<pr:column headerText="Ações" styleClass="tools" style="text-align: center; font-size: 85%; width: 85px;">
+														<a href="javascript:void(0);"
+															style="margin-left: 10px; color: #70B9B0;" 
+															title="Mostrar no Mapa"
+															onclick="marcarMotoristaMapa('#{visualizacao.latitude}', '#{visualizacao.longitude}', '#{visualizacao.nomeMotorista}');">
+															<span class="fa fa-map-marker"></span>
+														</a>
+													</pr:column>
+												</pr:dataTable>
+						      				</div>
+						      			</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{corridaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{corridaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!corridaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<t:div styleClass="row" id="divCorridaPesquisa">
+						        	
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Nome do Motorista:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Motorista" 
+						        				value="#{corridaView.filtro.motorista.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Motorista" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Nome do Passageiro:</label>
+											<h:inputText 
+						        				id="nomePassageiroPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Passageiro" 
+						        				value="#{corridaView.filtro.usuario.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Passageiro" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Data de Solicitação:</label>
+						        			<h:inputText id="dataSolicitacaoPesquisa" styleClass="form-control data date-picker" label="Data de Solicitação" value="#{corridaView.filtro.dataSolicitacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Solicitação" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Data de Finalização:</label>
+						        			<h:inputText id="dataFinalizacaoPesquisa" styleClass="form-control data date-picker" label="Data de Finalização" value="#{corridaView.filtro.dataFinalizacao}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Finalização" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Data de Início (Solicitação):</label>
+						        			<h:inputText id="dataInicioSolicitacaoPesquisa" styleClass="form-control data date-picker" label="Data de Início (Solicitação)" value="#{corridaView.filtro.dataInicioPeriodo}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Início (Solicitação)" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Data de Fim (Solicitação):</label>
+						        			<h:inputText id="dataFimSolicitacaoPesquisa" styleClass="form-control data date-picker" label="Data de Fim (Solicitação)" value="#{corridaView.filtro.dataFimPeriodo}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Fim (Solicitação)" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both;">
+						        			<label>Cidade:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadePesquisa"
+				        						styleClass="form-control"
+				        						value="#{corridaView.filtro.cidade}" 
+												label="Cidade"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{corridaView.listaCidade}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Status da Corrida:</label>
+						        			<h:selectOneMenu 
+						        				id="statusPesquisa"
+				        						styleClass="form-control"
+				        						value="#{corridaView.filtro.status}" 
+												label="Status da Corrida"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{corridaView.listaStatusCorrida}" 
+															   var="status"
+															   itemLabel="#{status.descricao}"
+															   itemValue="#{status.status}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Botão do Pânico:</label>
+						        			<h:selectOneMenu 
+						        				id="panicoPesquisa"
+				        						styleClass="form-control"
+				        						value="#{corridaView.filtro.indicadorPanico}" 
+												label="Botão do Pânico"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Pressionado" itemValue="1" />
+												<f:selectItem itemLabel="Não Pressionado" itemValue="0" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa dataInicioSolicitacaoPesquisa dataFimSolicitacaoPesquisa nomePassageiroPesquisa dataSolicitacaoPesquisa dataFinalizacaoPesquisa cidadePesquisa statusPesquisa panicoPesquisa corridaTable mensagens"
+						        				action="#{corridaView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{corridaView.pesquisarCorridaPorFiltro()}"
+						        				update="mensagens corridaTable"
+						        				process="@this,nomePesquisa,dataInicioSolicitacaoPesquisa,dataFimSolicitacaoPesquisa,nomePassageiroPesquisa,dataSolicitacaoPesquisa,dataFinalizacaoPesquisa,cidadePesquisa,statusPesquisa,panicoPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</t:div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="corridaTable" 
+											var="corrida" 
+											rows="10"
+											rowIndexVar="corridaRow" 
+											value="#{corridaView.corridaDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100,200,500">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corridaRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 150px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<pr:commandLink 
+													action="#{corridaView.carregarCorrida(corrida)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar Corrida"
+													oncomplete="exibirDetalhesCorrida();" 
+													update="panelModalDetalheCorrida"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{corridaView.carregarCorrida(corrida)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Exibir/Acompanhar Percurso"
+													rendered="#{corrida.status ne 1 and corrida.status ne 2 and corrida.status ne 3 and corrida.status ne 6}"
+													oncomplete="exibirPercursoCorrida('#{corrida.origem}', '#{corrida.destino}');" 
+													update="panelModalLocalizacao latitudeCorridaCorrente longitudeCorridaCorrente latitudeCorridaOrigem longitudeCorridaOrigem latitudeCorridaDestino longitudeCorridaDestino latitudesPercurso longitudesPercurso"
+													process="@this">
+													<span class="fa fa-map"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{corridaView.carregarCorridaVisualizacoes(corrida)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Visualizações de Motoristas"
+													oncomplete="exibirModalVisualizacoes()" 
+													update="panelModalVisualizacao latitudeCorridaOrigem longitudeCorridaOrigem latitudeCorridaDestino longitudeCorridaDestino"
+													process="@this">
+													<span class="fa fa-taxi"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Nome do Motorista" style="text-align: left; font-size: 85%; width: 280px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.usuarioMotorista.nome}" />
+											</pr:column>
+											<pr:column headerText="Nome do Passageiro" style="text-align: left; font-size: 85%; width: 280px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.nomePassageiro}" rendered="#{not empty corrida.nomePassageiro}" />
+												<h:outputText value="#{corrida.usuario.nome}" rendered="#{empty corrida.nomePassageiro}" />
+											</pr:column>
+											<pr:column headerText="Veículo" style="text-align: left; font-size: 85%; width: 150px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText rendered="#{not empty corrida.veiculo}" value="#{corrida.veiculo.marca}" />
+											</pr:column>
+											<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 140px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText rendered="#{not empty corrida.veiculo}" value="#{corrida.veiculo.placa}" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 200px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.descricaoStatus}" />
+											</pr:column>
+											<pr:column headerText="Solicitação" style="text-align: left; font-size: 85%; width: 220px;#{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.dataSolicitacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Finalização" style="text-align: left; font-size: 85%; width: 220px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.dataFinalizacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Cidade de Trab." style="text-align: left; font-size: 85%; width: 250px; #{corrida.indicadorPanico eq 1 ? 'background-color: #FF00FF;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 3 or corrida.status eq 6 ? 'background-color: #FCF1EE;' : ''} #{empty corrida.indicadorPanico and corrida.status eq 5 ? 'background-color: rgba(41, 199, 95, 0.05)' : ''} #{empty corrida.indicadorPanico and corrida.status eq 1 and not empty corrida.dataRecuperacao ? 'background-color: rgba(253, 186, 19, 0.32)' : ''}">
+												<h:outputText value="#{corrida.motorista.cidade.nome} - #{corrida.motorista.cidade.siglaUf}" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="corridaTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="corridaTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="corridaTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script src="https://maps.google.com/maps/api/js?file=api&amp;v=3&amp;key=AIzaSyBqwOrp--K7rhl--mQvsdIqwSX4voNqR1g"></script>
+			
+			<script>
+				var map;
+			 	var center;
+			 	var latitude;
+			 	var longitude;
+			 	
+				function fecharModalCorrida() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesCorrida() {
+					$('#modalDetalhe').modal('show');
+				}
+				function fecharModalLocalizacao() {
+					$('#modalLocalizacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function recarregarDatas() {
+	        		
+	        		$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	
+	        		$(".data").mask("99/99/9999");
+	        	}
+				
+				$( document ).ready(function() {
+			 		
+					recarregarDatas();
+					
+				 	$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+					    google.maps.event.trigger(map, "resize");
+					    map.setCenter(center);
+					    
+					 	/*$('#latitudeFinal').val($('#latitudeMotoristaExistente').val());
+					 	$('#longitudeFinal').val($('#longitudeMotoristaExistente').val());
+					 	$('#dataFinal').val($('#dataMotoristaExistente').val());*/
+					});
+				 	
+			 	});
+				
+				function definirNovaLocalizacao() {
+					
+					if ($('#latitudeCorridaCorrente').val() != null) {
+						
+						
+						if ($('#latitudeCorridaCorrente').val() != '') {
+							
+							if (map != null) {
+								latitude = $('#latitudeCorridaCorrente').val();
+								longitude = $('#longitudeCorridaCorrente').val();
+								center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+								
+								google.maps.event.trigger(map, "resize");
+							    map.setCenter(center);
+							    marker.setPosition(center);
+							}
+							
+						}
+					}
+				}
+			</script>
+			<h:outputScript>
+	    		//<![CDATA[	
+	    		
+	    			function exibirModalVisualizacoes() {
+					
+						console.log('passou maps 6');
+					
+						$('#modalCorridaVisualizacoes').modal('show');
+						
+						var latOrigem = $('#latitudeCorridaOrigem').val();
+						var lngOrigem = $('#longitudeCorridaOrigem').val();
+						console.log('latOrigem: ' + latOrigem);
+						console.log('longOrigem: ' + lngOrigem);
+						
+						var latDestino =  $('#latitudeCorridaDestino').val();
+						var lngDestino = $('#longitudeCorridaDestino').val();
+						
+						center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+				        map = new google.maps.Map(document.getElementById('googleMap3'), {
+				          zoom: 11,
+				          mapTypeId: google.maps.MapTypeId.ROADMAP,
+				          center: { lat: parseFloat(latDestino), lng: parseFloat(lngDestino) }
+				        });
+				        
+				        var markerOrigem  = new google.maps.Marker({
+			        	  position: { lat: parseFloat(latOrigem), lng: parseFloat(lngOrigem) },
+				          map: map,
+				          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/inicio.png",
+				          title: "Origem do Passageiro"
+				        });
+				        
+				        var markerDestino  = new google.maps.Marker({
+			        	  position: { lat: parseFloat(latDestino), lng: parseFloat(lngDestino) },
+				          map: map,
+				          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/fim.png",
+				          title: "Destino da Corrida"
+				        });
+				        
+					}
+					
+					function marcarMotoristaMapa(latitude, longitude, nomeMotorista) {
+						
+						marker = new google.maps.Marker({
+				          position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+				          map: map,
+				          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/taxi.png",
+				          title: nomeMotorista
+				        });
+					}
+	    		
+	    			function exibirPercursoCorrida(origem, destino) {
+					
+						//var pathCoordinates = Array();
+						
+						latitude = $('#latitudeCorridaCorrente').val();
+						longitude = $('#longitudeCorridaCorrente').val();
+						
+						var latOrigem = $('#latitudeCorridaOrigem').val();
+						var lngOrigem = $('#longitudeCorridaOrigem').val();
+						
+						var latDestino =  $('#latitudeCorridaDestino').val();
+						var lngDestino = $('#longitudeCorridaDestino').val();
+						
+						var latitudes = $('#latitudesPercurso').val();
+						var longitudes = $('#longitudesPercurso').val();
+						
+						var lat = latitudes.split(";");
+						var lng = longitudes.split(";");
+						
+						/*for (i = 0; i == lat.length - 1; i++) {
+							
+							var latArray = lat[i];
+							var lngArray = lng[i];
+							pathCoordinates.push({
+								lat : latArray,
+								lng : lngArray
+							});
+						}*/
+						
+						center = { lat: parseFloat(latOrigem), lng: parseFloat(lngOrigem) };
+				        map = new google.maps.Map(document.getElementById('googleMap2'), {
+				          zoom: 11,
+				          mapTypeId: google.maps.MapTypeId.ROADMAP,
+				          center: { lat: parseFloat(latOrigem), lng: parseFloat(lngOrigem) }
+				        });
+				        
+				        marker = new google.maps.Marker({
+				          position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+				          map: map,
+				          icon: "https://app.segtaxi.com.br/public/template/assets/images/icons/taxi.png",
+				          title: "Último Registro do Veículo na Corrida"
+				        });
+				        
+				        var markerOrigem  = new google.maps.Marker({
+			        	  position: { lat: parseFloat(latOrigem), lng: parseFloat(lngOrigem) },
+				          map: map,
+				          title: "Origem: " + origem
+				        });
+				        
+				        var markerDestino  = new google.maps.Marker({
+			        	  position: { lat: parseFloat(latDestino), lng: parseFloat(lngDestino) },
+				          map: map,
+				          title: "Destino : " + destino
+				        });
+				        
+				      	//Initialize the Path Array
+				        var path = Array();
+				 
+				        //Initialize the Direction Service
+				        var service = new google.maps.DirectionsService();
+				 
+				        //Set the Path Stroke Color
+				        var poly = new google.maps.Polyline({ map: map, strokeColor: '#4986E7', strokeOpacity: 0.6, strokeWeight: 5 });
+				        
+				        for (var i = 0; i < lat.length; i++) {
+			                path.push({ lat : parseFloat(lat[i]), lng : parseFloat(lng[i]) });
+			                poly.setPath(path);
+			                service.route({
+			                    origin: { lat : parseFloat(latOrigem), lng : parseFloat(lngOrigem) },
+			                    destination: { lat : parseFloat(latDestino), lng : parseFloat(lngDestino) },
+			                    travelMode: google.maps.DirectionsTravelMode.DRIVING
+			                }, function (result, status) {
+			                    if (status == google.maps.DirectionsStatus.OK) {
+			                        for (var i = 0, len = result.routes[0].overview_path.length; i < len; i += 1) {
+			                            path.push(result.routes[0].overview_path[i]);
+			                        }
+			                    }
+			                });
+			            }
+				        
+				        /*var poly = new google.maps.Polyline({
+							path : pathCoordinates,
+							geodesic : true,
+							strokeColor : '#FF0000',
+							strokeOpacity : 1,
+							strokeWeight : 4,
+							map : map
+						});
+				        
+				        poly.setMap(map);*/
+				        
+				        $('#modalLocalizacao').modal('show');
+					    
+					}
+	    		
+	    		//]]>
+	    	</h:outputScript>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

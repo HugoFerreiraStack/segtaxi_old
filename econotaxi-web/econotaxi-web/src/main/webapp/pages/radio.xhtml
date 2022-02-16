@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o rádio?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens radioTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{radioView.excluirRadio()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheRadio">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados da Rádio</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-6" style="margin-top: 10px; clear: both;">
+						        			<label>Nome*:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control" required="true" label="Nome" value="#{radioView.radio.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+				        					<label>Cidade*:</label><br />
+											<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						label="Cidade"
+				        						value="#{radioView.radio.cidade}"
+				        						style="height: 42px;"
+				        						converter="indexConverter"
+				        						required="true">
+				        						<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<t:selectItems value="#{radioView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+				        					</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-6" style="margin-top: 10px; clear: both;">
+						        			<label>Frequência*:</label>
+						        			<h:inputText styleClass="form-control" required="true" label="Frequência" value="#{radioView.radio.frequencia}">
+						        				<f:passThroughAttribute name="placeholder" value="Frequência" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>Faixa*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						label="Faixa"
+				        						value="#{radioView.radio.faixa}"
+				        						style="height: 42px;"
+				        						required="true">
+				        						<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="AM" itemLabel="AM" />
+				        						<f:selectItem itemValue="FM" itemLabel="FM" />
+				        					</h:selectOneMenu>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{radioView.salvarRadio()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{radioView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{radioView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!radioView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalheRadio"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesRadio()">
+						        				<i class="fa fa-plus"></i> Adicionar
+						        				<f:setPropertyActionListener value="#{null}" target="#{radioView.radio}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>Nome:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{radioView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+				        					<label>Cidade:</label>
+											<h:selectOneMenu 
+												id="cidadePesquisa"
+				        						styleClass="form-control"
+				        						label="Cidade"
+				        						value="#{radioView.filtro.cidade}"
+				        						style="height: 42px;"
+				        						converter="indexConverter">
+				        						<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<t:selectItems value="#{radioView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+				        					</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa radioTable mensagens cidadePesquisa"
+						        				action="#{radioView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{radioView.pesquisarRadioPorFiltro()}" 
+						        				update="radioTable"
+						        				process="@this,nomePesquisa,cidadePesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="radioTable" 
+											var="radio" 
+											rows="10"
+											rowIndexVar="radioRow" 
+											value="#{radioView.radioDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{radioRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{radio.nome}" />
+											</pr:column>
+											<pr:column headerText="Cidade" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{radio.cidade.nome}">
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Frequência" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{radio.frequencia}" />
+											</pr:column>
+											<pr:column headerText="Faixa" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{radio.faixa}" />
+											</pr:column>
+											<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{radioView.carregarRadio(radio)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Excluir"
+													oncomplete="exibirExcluirRadio();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{radioView.carregarRadio(radio)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar"
+													oncomplete="exibirDetalhesRadio();" 
+													update="panelModalDetalheRadio"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalRadio() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesRadio() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirRadio() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

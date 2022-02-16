@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<pr:remoteCommand autoRun="true" actionListener="#{passageiroView.chamarModal()}" />
+		
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Bloqueio</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente bloquear o passageiro?
+				          				</div>
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo do Bloqueio*:</label><br />
+				          					<h:inputTextarea id="motivoBloqueio" value="#{passageiroView.motivoBloqueio}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Bloquear"
+			            			process="@this,motivoBloqueio"
+			            			update="mensagens passageiroTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{passageiroView.bloquearPassageiro()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheExcluir" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExcluir">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Bloqueio</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o passageiro e todas as suas corridas realizadas?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens passageiroTable"
+			            			oncomplete="fecharModalExcluir()" 
+			            			action="#{passageiroView.excluirPassageiro()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalhePassageiro">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Passageiro</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-6" style="text-align: center;">
+						        			<label>Selfie:</label><br />
+						        			<img id="imgSelfie" src="#{passageiroView.passageiro.imagem}" title="Selfie" style="width: 200px; cursor:pointer;" onclick="abrirModalImg('imgSelfie')" />
+										</div>
+					              		<div class="col-md-6">
+						        			<label>Nome:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" required="true" label="Nome" value="#{passageiroView.passageiro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>E-mail:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" required="true" label="E-mail" value="#{passageiroView.passageiro.login}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>Celular:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" required="true" label="Celular" value="#{passageiroView.passageiro.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>Data de Nascimento:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" required="true" label="Data de Nascimento" value="#{passageiroView.passageiro.dataNascimento}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy"/>
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>Status:</label><br />
+						        			<h:outputText rendered="#{not empty passageiroView.passageiro.indicadorBloqueio}" value="Bloqueado" />
+						        			<h:outputText rendered="#{empty passageiroView.passageiro.indicadorBloqueio}" value="Ativo" />
+										</div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		<pr:commandLink 
+					            			styleClass="btn btn-sm btn-danger" 
+					            			rendered="#{empty passageiroView.passageiro.indicadorBloqueio}"
+					            			value="Bloquear Passageiro" 
+					            			onclick="exibirExcluirPassageiro()" />
+					            			
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{not empty passageiroView.passageiro.indicadorBloqueio}"
+				            			value="Desbloquear Passageiro" 
+				            			action="#{passageiroView.desbloquearPassageiro}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+				          		
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+	   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			Passageiro
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{passageiroView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{passageiroView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!passageiroView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Nome:</label>
+						        			<h:inputText 
+						        				id="nomePassageiroPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{passageiroView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="padding-top: 10px">
+						        			<label>E-mail:</label>
+						        			<h:inputText 
+						        				id="emailPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{passageiroView.filtro.login}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										
+										<div class="col-md-6" style="clear: both; padding-top: 10px;">
+						        			<label>Com Cartão Ativo:</label>
+						        			<h:selectOneMenu 
+						        				id="cartaoPassageiroPesquisa"
+				        						styleClass="form-control"
+				        						value="#{passageiroView.filtro.possuiCartao}" 
+												label="Com Cartão Ativo"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Sim" itemValue="1" />
+												<f:selectItem itemLabel="Não" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6" style="padding-top: 10px;">
+						        			<label>Celular:</label>
+						        			<h:inputText 
+						        				id="celularPesquisa"
+						        				styleClass="form-control celular" 
+						        				label="Celular" 
+						        				value="#{passageiroView.filtro.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										
+										<div class="col-md-12" style="text-align: right; padding-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePassageiroPesquisa passageiroTable mensagens emailPesquisa celularPesquisa"
+						        				action="#{passageiroView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+						        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{passageiroView.pesquisarUsuarioPorFiltro()}" 
+						        				update="passageiroTable"
+						        				process="@this,nomePassageiroPesquisa,emailPesquisa,celularPesquisa" />
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+						        	
+						        	<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="passageiroTable" 
+											var="passageiro" 
+											rows="10"
+											rowIndexVar="passageiroRow" 
+											value="#{passageiroView.usuarioDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{passageiroRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 150px;">														
+												<pr:commandLink 
+													action="#{passageiroView.carregarUsuario(passageiro)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Bloquear Passageiro"
+													oncomplete="exibirExcluirPassageiro();" 
+													update="panelModalDetalheExclusao"
+													process="@this"
+													rendered="#{empty passageiro.indicadorBloqueio or passageiro.indicadorBloqueio ne 1}">
+													<f:setPropertyActionListener value="#{null}" target="#{passageiroView.motivoBloqueio}" />
+													<span class="fa fa-minus-circle"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{passageiroView.carregarUsuario(passageiro)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar"
+													oncomplete="exibirDetalhesPassageiro();" 
+													update="panelModalDetalhePassageiro"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{passageiroView.carregarUsuario(passageiro)}" 
+													style="color: #70B9B0;" 
+													title="Excluir Passageiro"
+													oncomplete="exibirExclusaoPassageiro();" 
+													update="panelModalDetalheExcluir"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{passageiro.nome}" />
+											</pr:column>
+											<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{passageiro.login}" />
+											</pr:column>
+											<pr:column headerText="Celular" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{passageiro.celular}" />
+											</pr:column>
+											<pr:column headerText="Sexo" style="text-align: left; font-size: 85%; width: 100px;">
+												<h:outputText value="#{passageiro.sexo}" />
+											</pr:column>
+											<pr:column headerText="Versão App" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{passageiro.versaoApp}" />
+											</pr:column>
+											<pr:column headerText="Qtd. Corridas" style="text-align: left; font-size: 85%; width: 210px;">
+												<h:outputText value="#{passageiro.qtdCorridasRealizadas}" />
+											</pr:column>
+											<pr:column headerText="Data de Cadastro" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{passageiro.dataCadastro}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Data de Nascimento" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{passageiro.dtNascimento}">
+													<f:convertDateTime pattern="dd/MM/yyyy"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 100px;">
+												<h:outputText rendered="#{not empty passageiro.indicadorBloqueio}" value="Bloqueado" />
+						        				<h:outputText rendered="#{empty passageiro.indicadorBloqueio}" value="Ativo" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="passageiroTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="passageiroTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="passageiroTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+									        	    
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalPassageiro() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesPassageiro() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirPassageiro() {
+					$('#modalDetalhe').modal('hide');
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function exibirExclusaoPassageiro() {
+					$('#modalDetalheExcluir').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function fecharModalExcluir() {
+					$('#modalDetalheExcluir').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<style>
+				.controls {
+			        margin-top: 10px;
+			        border: 1px solid transparent;
+			        border-radius: 2px 0 0 2px;
+			        box-sizing: border-box;
+			        -moz-box-sizing: border-box;
+			        height: 32px;
+			        outline: none;
+			        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			    }
+			    
+			    .pac-container {
+			    	z-index: 999999 !important;
+			    }
+			</style>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Desautorização</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente desautorizar o usuário?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Desautorizar"
+			            			process="@this"
+			            			update="mensagens usuarioTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{usuarioAppEmpresaView.desautorizarUsuario()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheAtivacao" tabindex="-1" role="dialog" aria-labelledby="myModalAtivacaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheAtivacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Autorização</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<t:div id="centroCustoSalvar" styleClass="col-md-12" rendered="#{not empty usuarioAppEmpresaView.centros}">
+						        			<h:outputLabel value="Centro de Custo:" />
+						        			<h:selectOneMenu 
+						        				id="centroCustoCorridaNova2"
+				        						styleClass="form-control"
+				        						converter="javax.faces.Long"
+				        						value="#{usuarioAppEmpresaView.usuario.idCentroCusto}" 
+				        						disabled="#{not empty usuarioAppEmpresaView.usuarioTele.idCentroCusto}"
+												label="Centro de Custo"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{usuarioAppEmpresaView.centros}" 
+															   var="centro"
+															   itemLabel="#{centro.nome}"
+															   itemValue="#{centro.id}" />
+											</h:selectOneMenu>
+										</t:div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Autorizar"
+			            			process="@this, centroCustoCorridaNova2"
+			            			update="mensagens usuarioTable"
+			            			oncomplete="fecharModalAtivacao()" 
+			            			action="#{usuarioAppEmpresaView.autorizarUsuario()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Usuário APP Empresa (Voucher Eletrônico e Preço Fixo)
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{usuarioAppEmpresaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{usuarioAppEmpresaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!usuarioAppEmpresaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro do Relatório</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Empresa Conveniada*:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaConveniadaCorridaNova"
+				        						styleClass="form-control"
+				        						value="#{usuarioAppEmpresaView.filtro.empresaConveniada}" 
+												label="Empresa Conveniada"
+												required="true"
+												disabled="#{not empty usuarioAppEmpresaView.usuarioTele.idEmpresaConveniada}"
+												style="height: 42px;"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{usuarioAppEmpresaView.empresas}" 
+															   var="empresa"
+															   itemLabel="#{empresa.nome}"
+															   itemValue="#{empresa}" />
+												<f:ajax event="change" render="centroCusto" listener="#{usuarioAppEmpresaView.carregarCentrosCusto()}" />
+											</h:selectOneMenu>
+										</div>
+										<t:div id="centroCusto" styleClass="col-md-6">
+						        			<h:outputLabel value="Centro de Custo:" />
+						        			<h:selectOneMenu 
+						        				id="centroCustoCorridaNova"
+				        						styleClass="form-control"
+				        						converter="javax.faces.Long"
+				        						value="#{usuarioAppEmpresaView.filtro.idCentroCusto}" 
+				        						disabled="#{not empty usuarioAppEmpresaView.usuarioTele.idCentroCusto}"
+												label="Centro de Custo"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{usuarioAppEmpresaView.centros}" 
+															   var="centro"
+															   itemLabel="#{centro.nome}"
+															   itemValue="#{centro.id}" />
+											</h:selectOneMenu>
+										</t:div>
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Nome do Usuário:</label>
+						        			<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Usuário" 
+						        				value="#{usuarioAppEmpresaView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Usuário" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>E-mail do Usuário:</label>
+						        			<h:inputText 
+						        				id="cpfPesquisa"
+						        				styleClass="form-control" 
+						        				label="E-mail do Usuário" 
+						        				value="#{usuarioAppEmpresaView.filtro.login}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail do Usuário" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar Usuários"
+						        				action="#{usuarioAppEmpresaView.consultarUsuarios()}" 
+						        				update="mensagens usuarioTable"
+						        				process="@this,nomePesquisa,cpfPesquisa,empresaConveniadaCorridaNova,centroCustoCorridaNova" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+						        	
+				        			<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum usuário até o momento."
+											id="usuarioTable" 
+											var="usuario" 
+											rows="10"
+											rowIndexVar="usuarioRow" 
+											value="#{usuarioAppEmpresaView.usuarioDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{usuarioRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText rendered="#{empty usuario.idEmpresaConveniada}" value="Não Autorizado" />
+												<h:outputText rendered="#{not empty usuario.idEmpresaConveniada}" value="Autorizado" />
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 280px;">
+												<h:outputText value="#{usuario.nome}" />
+											</pr:column>
+											<pr:column headerText="Centro de Custo" style="text-align: left; font-size: 85%; width: 280px;">
+												<h:outputText value="#{usuario.centroCusto.nome}" />
+											</pr:column>
+											<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{usuario.login}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{usuarioAppEmpresaView.carregarUsuario(usuario)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Desautorizar"
+													rendered="#{not empty usuario.idEmpresaConveniada}"
+													oncomplete="exibirExcluirUsuario();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{usuarioAppEmpresaView.carregarUsuario(usuario)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Autorizar"
+													rendered="#{empty usuario.idEmpresaConveniada}"
+													oncomplete="exibirAtivarUsuario();" 
+													update="panelModalDetalheAtivacao"
+													process="@this">
+													<span class="fa fa-check"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="usuarioTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="usuarioTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="usuarioTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function exibirExcluirUsuario() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirAtivarUsuario() {
+					$('#modalDetalheAtivacao').modal('show');
+				}
+				function fecharModalAtivacao() {
+					$('#modalDetalheAtivacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

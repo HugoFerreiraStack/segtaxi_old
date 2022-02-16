@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Inativação</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente inativar o Centro de Custo?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Inativar"
+			            			process="@this"
+			            			update="mensagens centroCustoTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{centroCustoView.excluirCentroCusto()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheAtivacao" tabindex="-1" role="dialog" aria-labelledby="myModalAtivacaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheAtivacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Ativação</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente reativar o Centro de Custo?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Ativar"
+			            			process="@this"
+			            			update="mensagens centroCustoTable"
+			            			oncomplete="fecharModalAtivacao()" 
+			            			action="#{centroCustoView.ativarCentroCusto()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheCentroCusto">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Centro de Custo</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-6" style="clerar: both; margin-top: 10px;">
+						        			<label>Nome*:</label>
+						        			<h:inputText maxlength="50" styleClass="form-control" required="true" label="Nome" value="#{centroCustoView.centroCusto.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Empresa Conveniada*:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaConveniadaCorridaNova"
+				        						styleClass="form-control"
+				        						converter="javax.faces.Long"
+				        						value="#{centroCustoView.centroCusto.idEmpresaConveniada}" 
+												label="Empresa Conveniada"
+												disabled="#{not empty centroCustoView.usuarioTele.idEmpresaConveniada}"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{centroCustoView.empresas}" 
+															   var="empresa"
+															   itemLabel="#{empresa.nome}"
+															   itemValue="#{empresa.id}" />
+											</h:selectOneMenu>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{centroCustoView.salvarCentroCusto()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+	   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			Centro de Custo
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{centroCustoView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{centroCustoView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!centroCustoView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalheCentroCusto"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												action="#{centroCustoView.inicializarCentroCusto()}"
+												oncomplete="exibirDetalhesCentroCusto()">
+						        				<i class="fa fa-plus"></i> Adicionar
+						        				<f:setPropertyActionListener value="#{null}" target="#{centroCustoView.centroCusto}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both; margin-top: 10px;">
+						        			<label>Nome:</label>
+						        			<h:inputText 
+						        				id="nomeCentroCustoPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{centroCustoView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+						        			<label>Empresa Conveniada:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaConveniadaPesquisa"
+				        						styleClass="form-control"
+				        						converter="javax.faces.Long"
+				        						value="#{centroCustoView.filtro.idEmpresaConveniada}" 
+				        						disabled="#{not empty centroCustoView.usuarioTele.idEmpresaConveniada}"
+												label="Empresa Conveniada"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{centroCustoView.empresas}" 
+															   var="empresa"
+															   itemLabel="#{empresa.nome}"
+															   itemValue="#{empresa.id}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomeCentroCustoPesquisa empresaConveniadaPesquisa"
+						        				action="#{centroCustoView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{centroCustoView.pesquisarCentroCustoPorFiltro()}" 
+						        				update="centroCustoTable"
+						        				process="@this,nomeCentroCustoPesquisa,empresaConveniadaPesquisa" />
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+						        	
+						        	<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="centroCustoTable" 
+											var="cc" 
+											rows="10"
+											rowIndexVar="usuarioRow" 
+											value="#{centroCustoView.centroCustoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{usuarioRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{centroCustoView.carregarCentroCusto(cc)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Inativar"
+													rendered="#{cc.status eq 1}"
+													oncomplete="exibirExcluirCentroCusto();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{centroCustoView.carregarCentroCusto(cc)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Ativar"
+													rendered="#{cc.status eq 2}"
+													oncomplete="exibirAtivarCentroCusto();" 
+													update="panelModalDetalheAtivacao"
+													process="@this">
+													<span class="fa fa-check"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{centroCustoView.carregarCentroCusto(cc)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar"
+													oncomplete="exibirDetalhesCentroCusto();" 
+													update="panelModalDetalheCentroCusto"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{cc.nome}" />
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 140px;">
+												<h:outputText rendered="#{cc.status eq 1}" value="Ativo" />
+												<h:outputText rendered="#{cc.status eq 2}" value="Inativo" />
+											</pr:column>
+											<pr:column headerText="Data de Cadastro" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{cc.dataCadastro}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Empresa Conveniada" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{cc.empresaConveniada.nome}" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="centroCustoTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="centroCustoTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="centroCustoTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+									        	    
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalCentroCusto() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesCentroCusto() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirCentroCusto() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirAtivarCentroCusto() {
+					$('#modalDetalheAtivacao').modal('show');
+				}
+				function fecharModalAtivacao() {
+					$('#modalDetalheAtivacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

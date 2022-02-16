@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o feriado?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens feriadoTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{feriadoView.excluirFeriado()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheFeriado">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Feriado</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Nome*:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control" required="true" label="Nome" value="#{feriadoView.feriado.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Data*:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control date-picker data" required="true" label="Data" value="#{feriadoView.feriado.dataFeriado}">
+						        				<f:passThroughAttribute name="placeholder" value="Data" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+				        					<label>Cidade:</label><br />
+											<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						value="#{feriadoView.feriado.cidade}" 
+												label="Cidade"
+												converter="indexConverter"
+												style="height: 44px;">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+												<t:selectItems value="#{feriadoView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{feriadoView.salvarFeriado()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{feriadoView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{feriadoView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!feriadoView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalheFeriado"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesFeriado()"
+												oncomplete="recarregarDatas()">
+						        				<i class="fa fa-plus"></i> Adicionar
+						        				<f:setPropertyActionListener value="#{null}" target="#{feriadoView.feriado}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-4" style="clear: both; margin-top: 10px">
+						        			<label>Nome:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{feriadoView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Data do Feriado:</label>
+											<h:inputText 
+						        				id="dataPesquisa"
+						        				styleClass="form-control date-picker data" 
+						        				label="Data do Feriado" 
+						        				value="#{feriadoView.filtro.dataFeriado}">
+						        				<f:passThroughAttribute name="placeholder" value="dd/MM/yyyy" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+				        					<label>Cidade:</label>
+											<h:selectOneMenu 
+												id="cidadePesquisa"
+				        						styleClass="form-control"
+				        						label="Cidade"
+				        						value="#{feriadoView.filtro.cidade}"
+				        						converter="indexConverter"
+				        						style="height: 42px;">
+				        						<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<t:selectItems value="#{feriadoView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+				        					</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa feriadoTable mensagens cidadePesquisa dataPesquisa"
+						        				action="#{feriadoView.limparFormulario()}"
+						        				process="@this"
+						        				oncomplete="recarregarDatas()"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{feriadoView.pesquisarFeriadoPorFiltro()}" 
+						        				update="feriadoTable mensagens"
+						        				process="@this,nomePesquisa,cidadePesquisa,dataPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="feriadoTable" 
+											var="feriado" 
+											rows="10"
+											rowIndexVar="feriadoRow" 
+											value="#{feriadoView.feriadoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{feriado.nome}" />
+											</pr:column>
+											<pr:column headerText="Data" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{feriado.dataFeriado}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Cidade" style="text-align: left; font-size: 85%; width: 400px;">
+												<h:outputText style="padding-left: 1px;" value="#{feriado.cidade.nome}">
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Ações" styleClass="tools" style="text-align: center; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{feriadoView.carregarFeriado(feriado)}" 
+													style="color: #70B9B0;" 
+													title="Excluir"
+													oncomplete="exibirExcluirFeriado();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+			
+				$( document ).ready(function() {
+					recarregarDatas();
+				});
+			
+				function recarregarDatas() {
+	        		
+	        		$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	
+	        		$(".data").mask("99/99/9999");
+	        	}
+			
+				function fecharModalFeriado() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesFeriado() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirFeriado() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

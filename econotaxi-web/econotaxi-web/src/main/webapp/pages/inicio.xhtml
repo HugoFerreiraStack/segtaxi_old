@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<div class="row">
+		  		<div class="col-xs-12">
+					<t:div id="mensagens">
+		   				<t:div styleClass="row" rendered="#{dashboardView.messages}" style="padding-left: 10px; padding-right: 10px;">
+							<t:div rendered="#{dashboardView.mensagensErro}" class="alert alert-danger">
+								<h3><i class="fa fa-times"></i> Erro!</h3>
+								<h:messages style="list-style-type: none !important;" />
+		                    </t:div>
+		                    
+		                    <t:div rendered="#{!dashboardView.mensagensErro}" class="alert alert-success">
+								<h3><i class="fa fa-check"></i> Sucesso!</h3>
+								<h:messages style="list-style-type: none !important;" />
+		                    </t:div>
+						</t:div>
+					</t:div>
+				</div>
+			</div>
+		
+			<t:div id="cardsDashboard" styleClass="row">
+			
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
+		    		<pr:commandLink
+		    			styleClass="btn btn-primary"
+		    			process="@this"
+						action="#{dashboardView.carregarDashboard()}"
+						update="cardsDashboard,gridMotoristaPendente,gridVeiculoPendente,gridLojistaPendente,gridCorridasAndamento"> <i class="fa fa-refresh"></i> Atualizar Dashboard
+		    		</pr:commandLink>
+		    	</div>
+			
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		  			<h:commandLink action="#{dashboardView.carregarTelaCorridasBotaoPanico()}" 
+		  					styleClass="card card-banner card-red-light">
+				  		<div class="card-body">
+				    		<i class="icon fa fa-bullhorn fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Botão do Pânico agora!</div>
+						      	<div class="value">#{dashboardView.qtdBotaoPanico}</div>
+						    </div>
+				  		</div>
+				  	</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		  			<h:commandLink disabled="#{!loginView.verificaAutorizacao(4)}" action="#{dashboardView.carregarTelaMotoristasAtivos()}" 
+		  					styleClass="card card-banner card-green-light">
+				  		<div class="card-body">
+				    		<i class="icon fa fa-check fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Motoristas Ativos</div>
+						      	<div class="value">#{dashboardView.qtdMotoristasAtivos}</div>
+						    </div>
+				  		</div>
+				  	</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(4)}" action="#{dashboardView.carregarTelaMotoristasPendentes()}" 
+		  					styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-clock-o fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Motoristas Pendentes</div>
+					      		<div class="value">#{dashboardView.qtdMotoristasPendentes}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		  			<h:commandLink disabled="#{!loginView.verificaAutorizacao(8)}" action="#{dashboardView.carregarTelaVeiculosAtivos()}" 
+		  					styleClass="card card-banner card-green-light">
+				  		<div class="card-body">
+				    		<i class="icon fa fa-car fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Veículos Ativos</div>
+						      	<div class="value">#{dashboardView.qtdVeiculosAtivos}</div>
+						    </div>
+				  		</div>
+				  	</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(8)}" action="#{dashboardView.carregarTelaVeiculosPendentes()}" 
+		  					styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-car fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Veículos Pendentes</div>
+					      		<div class="value">#{dashboardView.qtdVeiculosPendentes}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(11)}" action="#{dashboardView.carregarTelaUsuariosAtivos()}" styleClass="card card-banner card-green-light">
+				 		<div class="card-body">
+				    		<i class="icon fa fa-users fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Usuários Ativos (APP)</div>
+						      	<div class="value">#{dashboardView.qtdUsuariosAtivos}</div>
+						    </div>
+				  		</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(11)}" action="#{dashboardView.carregarTelaUsuariosCartaoAtivos()}" styleClass="card card-banner card-green-light">
+				 		<div class="card-body">
+				    		<i class="icon fa fa-credit-card fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Usuários C/ Cartão Ativo (APP)</div>
+						      	<div class="value">#{dashboardView.qtdUsuariosPagamentosAtivo}</div>
+						    </div>
+				  		</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		  			<h:commandLink disabled="#{!loginView.verificaAutorizacao(18)}" action="#{dashboardView.carregarTelaLojistasAtivos()}" 
+		  					styleClass="card card-banner card-green-light">
+				  		<div class="card-body">
+				    		<i class="icon fa fa-shopping-bag fa-4x"></i>
+						    <div class="content">
+						      	<div class="title" style="font-weight: bold;">Lojistas Ativos</div>
+						      	<div class="value">#{dashboardView.qtdLojistasAtivos}</div>
+						    </div>
+				  		</div>
+				  	</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(18)}" action="#{dashboardView.carregarTelaLojistasPendentes()}" 
+		  					styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-shopping-bag fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Lojistas Pendentes</div>
+					      		<div class="value">#{dashboardView.qtdLojistasPendentes}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(6)}" action="#{dashboardView.carregarTelaCorridasRealizadas()}" styleClass="card card-banner card-green-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-check fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Corridas Realizadas</div>
+					      		<div class="value">#{dashboardView.qtdCorridasRealizadas}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(6)}" action="#{dashboardView.carregarTelaCorridasCorrentes()}" styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-clock-o fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Corridas em Andamento</div>
+					      		<div class="value">#{dashboardView.qtdCorridasCorrentes}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(6)}" action="#{dashboardView.carregarTelaCorridasBuscando()}" styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-clock-o fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Corridas Buscando</div>
+					      		<div class="value">#{dashboardView.qtdCorridasBuscando}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+		  		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		      		<h:commandLink disabled="#{!loginView.verificaAutorizacao(6)}" action="#{dashboardView.carregarTelaCorridasCaminho()}" styleClass="card card-banner card-yellow-light">
+		  				<div class="card-body">
+		    				<i class="icon fa fa-clock-o fa-4x"></i>
+		    				<div class="content">
+					      		<div class="title" style="font-weight: bold;">Corridas A Caminho</div>
+					      		<div class="value">#{dashboardView.qtdCorridasCaminho}</div>
+		    				</div>
+		  				</div>
+					</h:commandLink>
+		  		</div>
+			</t:div>
+			
+			<t:div id="gridMotoristaPendente" styleClass="row" style="margin-top: 20px;">
+			
+				<div class="col-lg-12">
+			    	<div class="card card-mini">
+			      		<div class="card-header">
+			        		<div class="card-title">Motoristas Pendentes</div>
+		        			<ul class="card-action"></ul>
+		      			</div>
+		      			<div class="card-body no-padding table-responsive">
+		      				<pr:dataTable 
+								emptyMessage="Nenhum motorista pendente até o momento."
+								id="motoristaPendenteTable" 
+								var="motorista" 
+								rows="10"
+								rowIndexVar="motoristaRow" 
+								value="#{dashboardView.motoristasPendentes}"
+								tableStyleClass="table table-striped card-table"
+								style="border: 0px solid black !important;"
+								tableStyle="border: 0px solid black !important;"
+								paginator="true"
+								lazy="true"
+								paginatorAlwaysVisible="false"
+								paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				               	rowsPerPageTemplate="5,10,15,20,50,100">
+								<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+									<h:outputText value="#{motoristaRow + 1}" />
+								</pr:column>
+								<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText value="#{motorista.nome}" />
+								</pr:column>
+								<pr:column headerText="CPF" style="text-align: left; font-size: 85%; width: 150px;">
+									<h:outputText value="#{motorista.cpf}" />
+								</pr:column>
+								<pr:column headerText="Cidade de Trab." style="text-align: left; font-size: 85%; width: 250px;">
+									<h:outputText value="#{motorista.cidade.nome} - #{motorista.cidade.siglaUf}" />
+								</pr:column>
+								<pr:column headerText="Dt. Cadastro" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText style="padding-left: 1px;" value="#{motorista.dataCadastro}" >
+										<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+									</h:outputText>
+								</pr:column>
+								<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 130px;">
+									<pr:commandLink disabled="#{!loginView.verificaAutorizacao(4)}" action="#{dashboardView.detalharMotorista(motorista.id)}" title="Detalhar Motorista">
+										<span class="fa fa-search"></span>
+									</pr:commandLink>
+								</pr:column>
+							</pr:dataTable>
+	      				</div>
+		    		</div>
+		    	</div>
+		    </t:div>
+		    
+		    <t:div id="gridVeiculoPendente" styleClass="row" style="margin-top: 20px;">
+			
+				<div class="col-lg-12">
+			    	<div class="card card-mini">
+			      		<div class="card-header">
+			        		<div class="card-title">Veículos Pendentes</div>
+		        			<ul class="card-action"></ul>
+		      			</div>
+		      			<div class="card-body no-padding table-responsive">
+		      				<pr:dataTable 
+								emptyMessage="Nenhum veículo pendente até o momento."
+								id="veiculoPendenteTable" 
+								var="veiculo" 
+								rows="10"
+								rowIndexVar="veiculoRow" 
+								value="#{dashboardView.veiculosPendentes}"
+								tableStyleClass="table table-striped card-table"
+								style="border: 0px solid black !important;"
+								tableStyle="border: 0px solid black !important;"
+								paginator="true"
+								lazy="true"
+								paginatorAlwaysVisible="false"
+								paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				               	rowsPerPageTemplate="5,10,15,20,50,100">
+								<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+									<h:outputText value="#{veiculoRow + 1}" />
+								</pr:column>
+								<pr:column headerText="Motorista" style="text-align: left; font-size: 85%; width: 250px;">
+									<h:outputText value="#{veiculo.motorista.nome}" />
+								</pr:column>
+								<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 150px;">
+									<h:outputText value="#{veiculo.placa}" />
+								</pr:column>
+								<pr:column headerText="Marca" style="text-align: left; font-size: 85%; width: 150px;">
+									<h:outputText value="#{veiculo.marca}" />
+								</pr:column>
+								<pr:column headerText="Modelo" style="text-align: left; font-size: 85%; width: 150px;">
+									<h:outputText value="#{veiculo.modelo}" />
+								</pr:column>
+								<pr:column headerText="Dt. Solicitação" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText style="padding-left: 1px;" value="#{veiculo.dataSolicitacao}" >
+										<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+									</h:outputText>
+								</pr:column>
+								<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 130px;">
+									<pr:commandLink disabled="#{!loginView.verificaAutorizacao(8)}" action="#{dashboardView.detalharVeiculo(veiculo.id)}" title="Detalhar Veiculo">
+										<span class="fa fa-search"></span>
+									</pr:commandLink>
+								</pr:column>
+							</pr:dataTable>
+	      				</div>
+		    		</div>
+		    	</div>
+		    </t:div>
+		    
+		    <t:div id="gridLojistaPendente" styleClass="row" style="margin-top: 20px;">
+			
+				<div class="col-lg-12">
+			    	<div class="card card-mini">
+			      		<div class="card-header">
+			        		<div class="card-title">Lojistas Pendentes</div>
+		        			<ul class="card-action"></ul>
+		      			</div>
+		      			<div class="card-body no-padding table-responsive">
+		      				<pr:dataTable 
+								emptyMessage="Nenhum lojista pendente até o momento."
+								id="lojistaPendenteTable" 
+								var="lojista" 
+								rows="10"
+								rowIndexVar="lojistaRow" 
+								value="#{dashboardView.lojistasPendentes}"
+								tableStyleClass="table table-striped card-table"
+								style="border: 0px solid black !important;"
+								tableStyle="border: 0px solid black !important;"
+								paginator="true"
+								lazy="true"
+								paginatorAlwaysVisible="false"
+								paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				               	rowsPerPageTemplate="5,10,15,20,50,100">
+								<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+									<h:outputText value="#{lojistaRow + 1}" />
+								</pr:column>
+								<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText value="#{lojista.nome}" />
+								</pr:column>
+								<pr:column headerText="Estabelecimento" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText value="#{lojista.nomeLoja}" />
+								</pr:column>
+								<pr:column headerText="Dt. Cadastro" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText style="padding-left: 1px;" value="#{lojista.dataCadastro}" >
+										<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+									</h:outputText>
+								</pr:column>
+								<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 130px;">
+									<pr:commandLink disabled="#{!loginView.verificaAutorizacao(18)}" action="#{dashboardView.detalharLojista(lojista.id)}" title="Detalhar Lojista">
+										<span class="fa fa-search"></span>
+									</pr:commandLink>
+								</pr:column>
+							</pr:dataTable>
+	      				</div>
+		    		</div>
+		    	</div>
+		    </t:div>
+			
+			<t:div id="gridCorridasAndamento" styleClass="row" style="margin-top: 20px;">
+			
+				<div class="col-lg-12">
+			    	<div class="card card-mini">
+			      		<div class="card-header">
+			        		<div class="card-title">Corridas em Andamento</div>
+		        			<ul class="card-action"></ul>
+		      			</div>
+		      			<div class="card-body no-padding table-responsive">
+		      				<pr:dataTable 
+								emptyMessage="Nenhuma corrida em andamento."
+								id="corridaAndamentoTable" 
+								var="corrida" 
+								rows="10"
+								rowIndexVar="corridaRow" 
+								value="#{dashboardView.corridasAndamento}"
+								tableStyleClass="table table-striped card-table"
+								style="border: 0px solid black !important;"
+								tableStyle="border: 0px solid black !important;"
+								paginator="true"
+								lazy="true"
+								paginatorAlwaysVisible="false"
+								paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				               	rowsPerPageTemplate="5,10,15,20,50,100">
+								<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+									<h:outputText value="#{corridaRow + 1}" />
+								</pr:column>
+								<pr:column headerText="Motorista" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText value="#{corrida.usuarioMotorista.nome}" />
+								</pr:column>
+								<pr:column headerText="Passageiro" style="text-align: left; font-size: 85%; width: 200px;">
+									<h:outputText value="#{corrida.usuario.nome}" />
+								</pr:column>
+								<pr:column headerText="Dt. Solicitação" style="text-align: left; font-size: 85%; width: 150px;">
+									<h:outputText style="padding-left: 1px;" value="#{corrida.dataSolicitacao}" >
+										<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+									</h:outputText>
+								</pr:column>
+								<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 130px;">
+									<pr:commandLink disabled="#{!loginView.verificaAutorizacao(6)}" action="#{dashboardView.detalharCorrida(corrida.id)}" title="Detalhar Corrida">
+										<span class="fa fa-search"></span>
+									</pr:commandLink>
+								</pr:column>
+							</pr:dataTable>
+	      				</div>
+		    		</div>
+		    	</div>
+		    	
+		   		<footer class="app-footer"> 
+				  	<div class="row">
+				    	<div class="col-xs-12" style="padding-top: 20px;">
+				      		<div class="footer-copyright">
+				        		Copyright &#169; <h:outputText value="#{loginView.nomeApp}" />.
+				      		</div>
+				    	</div>
+				  	</div>
+				</footer>
+				
+			</t:div>
+					
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

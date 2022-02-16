@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<h:inputHidden id="latitudeCidade" value="#{quadroTeleTaxiView.cidadeSelecionada.latitude}" />
+			<h:inputHidden id="longitudeCidade" value="#{quadroTeleTaxiView.cidadeSelecionada.longitude}" />
+			<h:inputHidden id="motoristas" value="#{quadroTeleTaxiView.motoristas}" />
+			<h:inputHidden id="localidades" value="#{quadroTeleTaxiView.localidades}" />
+		
+			<style>
+				.controls {
+			        margin-top: 10px;
+			        border: 1px solid transparent;
+			        border-radius: 2px 0 0 2px;
+			        box-sizing: border-box;
+			        -moz-box-sizing: border-box;
+			        height: 32px;
+			        outline: none;
+			        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			    }
+			    
+			    .pac-container {
+			    	z-index: 999999 !important;
+			    }
+			</style>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Quadro de Motoristas
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{quadroTeleTaxiView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{quadroTeleTaxiView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!quadroTeleTaxiView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro do Quadro</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Cidade:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadeFiltro"
+				        						styleClass="form-control"
+				        						value="#{quadroTeleTaxiView.cidadeSelecionada}" 
+												label="Cidade"
+												required="true"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{quadroTeleTaxiView.listaCidade}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+						        			<label>Empresa:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaFiltroAdmin"
+				        						styleClass="form-control"
+				        						value="#{quadroTeleTaxiView.empresaSelecionada}" 
+												label="Empresa"
+												required="true"
+												style="height: 42px;"
+												rendered="#{empty corridaTeleTaxiView.usuarioTele.tipoTeleTaxi}">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+						        			<h:selectOneMenu 
+						        				id="empresaFiltro1"
+				        						styleClass="form-control"
+				        						value="#{quadroTeleTaxiView.empresaSelecionada}" 
+												label="Empresa"
+												required="true"
+												style="height: 42px;"
+												rendered="#{corridaTeleTaxiView.usuarioTele.tipoTeleTaxi eq 3}">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaFiltro2"
+				        						styleClass="form-control"
+				        						value="#{quadroTeleTaxiView.empresaSelecionada}" 
+												label="Empresa"
+												required="true"
+												style="height: 42px;"
+												rendered="#{corridaTeleTaxiView.usuarioTele.tipoTeleTaxi eq 1}">
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaFiltro3"
+				        						styleClass="form-control"
+				        						value="#{quadroTeleTaxiView.empresaSelecionada}" 
+												label="Empresa"
+												required="true"
+												style="height: 42px;"
+												rendered="#{corridaTeleTaxiView.usuarioTele.tipoTeleTaxi eq 2}">
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Exibir Quadro"
+						        				action="#{quadroTeleTaxiView.exibirQuadro()}" 
+						        				update="mensagens latitudeCidade longitudeCidade localidades motoristas locaisQuadro"
+						        				process="@this,empresaFiltro1,empresaFiltroAdmin,empresaFiltro2,empresaFiltro3,cidadeFiltro" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+						        	<t:div id="locaisQuadro" styleClass="row">
+						        	
+						        		<t:div rendered="#{not empty quadroTeleTaxiView.pas}" styleClass="col-md-12">
+						        		
+						        			<ui:repeat var="local" value="#{quadroTeleTaxiView.pas}">
+						        				
+						        				<div class="col-md-3" style="height: 300px; padding-top: 10px; text-align: center;">
+						        					
+						        					<h3>#{local.nome}</h3>
+						        					<hr />
+						        					
+						        					<ui:repeat var="carro" value="#{local.carros}">
+						        					
+						        						<pr:commandLink
+						        							disabled="#{empty quadroTeleTaxiView.usuarioTele.id}"
+						        							title="#{carro.nomeMotorista} - #{carro.celular}. Entrou no PA em: #{carro.dataPontoApoioFormatada}"
+						        							value="#{carro.unidade} (#{carro.placa})"
+						        							action="#{quadroTeleTaxiView.carregarMotorista(carro)}"
+						        							oncomplete="modalMotorista();"
+						        							update="panelModalMotorista" /><br /> 
+						        					
+						        					</ui:repeat>
+						        					
+						        				</div>
+						        				
+						        			</ui:repeat>
+						        			
+						        		</t:div>
+						        		
+						        	</t:div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal fade" id="modalMotorista" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalMotorista">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Motorista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-12" style="margin-top: 10px;">
+						        			<label>Nome do Motorista:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Nome" value="#{quadroTeleTaxiView.motorista.nomeMotorista}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Placa:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Banco" value="#{quadroTeleTaxiView.motorista.placa}">
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Unidade:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Banco" value="#{quadroTeleTaxiView.motorista.unidade}">
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Celular:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Banco" value="#{quadroTeleTaxiView.motorista.celular}">
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Ponto de Apoio:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Banco" value="#{quadroTeleTaxiView.motorista.nomePontoApoio}">
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6">
+						        			<label>Última Atualização de Posição:</label>
+						        			<h:inputText disabled="true" styleClass="form-control horario" label="Conta Corrente" value="#{quadroTeleTaxiView.motorista.dataUltimaPosicao}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Entrou no PA em:</label>
+						        			<h:inputText styleClass="form-control horario" label="Conta Corrente" value="#{quadroTeleTaxiView.motorista.dataPontoApoio}">
+						        				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+						        			</h:inputText>
+										</div>
+										<br />
+										
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary" 
+				            			value="Retirar do PA/Mudar para Último"
+				            			process="@this"
+				            			style="margin-right: 5px;"
+				            			update="mensagens latitudeCidade longitudeCidade localidades motoristas locaisQuadro"
+				            			oncomplete="fecharModalMotorista()" 
+				            			action="#{quadroTeleTaxiView.retirarMotoristaPA()}" />
+				            			
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-primary" 
+				            			value="Mudar Posição"
+				            			process="@this, panelModalMotorista"
+				            			style="margin-right: 5px;"
+				            			update="mensagens latitudeCidade longitudeCidade localidades motoristas locaisQuadro"
+				            			oncomplete="fecharModalMotorista()" 
+				            			action="#{quadroTeleTaxiView.mudarMotoristaPosicao()}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+			
+			<script>
+				function modalMotorista() {
+					$('#modalMotorista').modal('show');
+					$(".horario").mask("99/99/9999 99:99:99");
+				}
+				
+				function fecharModalMotorista() {
+					$('#modalMotorista').modal('hide');
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

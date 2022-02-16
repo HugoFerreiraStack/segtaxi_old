@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<pr:remoteCommand autoRun="true" actionListener="#{lojistaView.chamarModal()}" />
+		
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Desautorizar</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo da Não Autorização*:</label>
+				          					<h:inputTextarea id="motivoDesautorizacao" value="#{lojistaView.motivoDesautorizacao}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Confirmar Desautorização"
+			            			process="@this,motivoDesautorizacao"
+			            			update="mensagens lojistaTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{lojistaView.desautorizarLojista()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalheBloqueio" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheBloqueio">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Bloqueio</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente bloquear o lojista?
+				          				</div>
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Motivo do Bloqueio*:</label><br />
+				          					<h:inputTextarea id="motivoBloqueio" value="#{lojistaView.motivoBloqueio}" styleClass="form-control" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Bloquear"
+			            			process="@this,motivoBloqueio"
+			            			update="mensagens lojistaTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{lojistaView.bloquearLojista()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheLojista">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Lojista</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-8">
+						        			<label>Nome:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Nome" value="#{lojistaView.lojista.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="text-align: center;">
+						        			<label>Selfie:</label><br />
+						        			<img src="#{lojistaView.lojista.selfie}" title="Selfie" />
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>Empresa:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="E-mail" value="#{lojistaView.lojista.nomeLoja}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>Telefone:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Celular" value="#{lojistaView.lojista.telefone}">
+						        				<f:passThroughAttribute name="placeholder" value="Celular" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>Status:</label><br />
+						        			<h:inputText disabled="true" styleClass="form-control" label="Status" value="#{lojistaView.lojista.descricaoStatus}">
+						        				<f:passThroughAttribute name="placeholder" value="Status" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+						        			<label>CEP:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="CEP" value="#{lojistaView.lojista.cep}">
+						        				<f:passThroughAttribute name="placeholder" value="CEP" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="clear: both; margin-top: 10px">
+						        			<label>Endereço:</label>
+						        			<h:inputText disabled="true" styleClass="form-control" label="Endereço" value="#{lojistaView.lojista.endereco}" />
+										</div>
+				          			</div>
+						  		</div>
+						  		
+				          		<div class="modal-footer">
+				            		
+				            		
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-danger" 
+				            			rendered="#{lojistaView.lojista.status eq 1}"
+				            			value="Negar Autorização do Lojista" 
+				            			onclick="exibirExcluirLojista()" />
+				            		
+				            		<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{lojistaView.lojista.status eq 1}"
+				            			value="Autorizar Lojista" 
+				            			action="#{lojistaView.autorizarLojista()}" />
+				            			
+				            		<pr:commandLink 
+				            			styleClass="btn btn-sm btn-danger" 
+				            			rendered="#{lojistaView.lojista.status eq 2}"
+				            			value="Bloquear Lojista" 
+				            			onclick="exibirBloquearLojista()" />
+				            			
+			            			<h:commandLink 
+				            			styleClass="btn btn-sm btn-success" 
+				            			rendered="#{lojistaView.lojista.status eq 5}"
+				            			value="Desbloquear Lojista" 
+				            			action="#{lojistaView.desbloquearLojista}" />
+				            			
+				            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+				            		
+				          		</div>
+				          		
+						  	</h:panelGroup>
+				   		</div>
+					</div>
+		   		</div>
+	   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			Lojista
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{lojistaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{lojistaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!lojistaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-12" style="clear: both;">
+						        			<label>Nome:</label>
+						        			<h:inputText 
+						        				id="nomeLojistaPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{lojistaView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>Nome Loja/Estabelecimento:</label>
+						        			<h:inputText 
+						        				id="lojaPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{lojistaView.filtro.nomeLoja}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome Loja/Estabelecimento" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Status do Lojista:</label>
+											<h:selectOneMenu 
+												id="statusPesquisa"
+				        						styleClass="form-control"
+				        						value="#{lojistaView.filtro.status}" 
+												label="Status"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{lojistaView.listaStatusLojista}" 
+															   var="status"
+															   itemLabel="#{status.descricao}"
+															   itemValue="#{status.status}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="clear: both; text-align: right; margin-top: 10px;">
+				        					
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomeLojistaPesquisa lojistaTable mensagens lojaPesquisa statusPesquisa"
+						        				action="#{lojistaView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+						        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{lojistaView.pesquisarUsuarioPorFiltro()}" 
+						        				update="lojistaTable"
+						        				process="@this,nomeLojistaPesquisa,lojaPesquisa,statusPesquisa" />
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+						        	
+						        	<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="lojistaTable" 
+											var="lojista" 
+											rows="10"
+											rowIndexVar="lojistaRow" 
+											value="#{lojistaView.usuarioDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{lojista.nome}" />
+											</pr:column>
+											<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{lojista.email}" />
+											</pr:column>
+											<pr:column headerText="Celular" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{lojista.celular}" />
+											</pr:column>
+											<pr:column headerText="Data de Cadastro" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{lojista.dataCadastro}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Status" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{lojista.descricaoStatus}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{lojistaView.carregarUsuario(lojista)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Bloquear Lojista"
+													oncomplete="exibirExcluirLojista();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{lojistaView.carregarUsuario(lojista)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar"
+													oncomplete="exibirDetalhesLojista();" 
+													update="panelModalDetalheLojista"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="lojistaTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="lojistaTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="lojistaTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+									        	    
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalLojista() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesLojista() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirLojista() {
+					fecharModalLojista();
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function fecharModalLocalizacao() {
+					$('#modalLocalizacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirBloquearLojista() {
+					fecharModalLojista();
+					$('#modalDetalheBloqueio').modal('show');
+				}
+				function fecharModalBloqueio() {
+					$('#modalDetalheBloqueio').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">#{msg['ocorrencia.titulo.excluir']}</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					#{msg['ocorrencia.pergunta.excluir']}
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">#{msg['botao.fechar']}</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="#{msg['botao.excluir']}"
+			            			process="@this"
+			            			update="formPrincipal:mensagens formPrincipal:ocorrenciaTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{ocorrenciaView.excluirOcorrencia()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheOcorrencia">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">#{msg['ocorrencia.titulo.adicionar']}</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          			
+				          				<div class="col-md-4">
+						        			<label>#{msg['ocorrencia.codigo.cip']}*:</label>
+						        			<h:inputText maxlength="8" styleClass="form-control" required="true" label="#{msg['ocorrencia.codigo.cip']}" value="#{ocorrenciaView.ocorrencia.codCip}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['ocorrencia.codigo.cip']}" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>#{msg['ocorrencia.codigo.fd']}*:</label>
+						        			<h:inputText maxlength="8" styleClass="form-control" required="true" label="#{msg['ocorrencia.codigo.fd']}" value="#{ocorrenciaView.ocorrencia.codFd}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['ocorrencia.codigo.fd']}" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>#{msg['ocorrencia.funcao']}:</label><br />
+											<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						value="#{ocorrenciaView.ocorrencia.funcaoCodigo}" 
+												label="#{msg['ocorrencia.funcao']}"
+												style="height: 44px !important">
+												<f:selectItem itemLabel="#{msg['combo.selecione']}" itemValue="#{null}" />
+												<t:selectItems value="#{ocorrenciaView.listaFuncoesArquivo}" 
+															   var="funcArq"
+															   itemLabel="#{funcArq.descricao}"
+															   itemValue="#{funcArq.codigo}" />
+											</h:selectOneMenu>
+										</div>
+						        		
+						        		<div style="clear: both; padding-top: 10px;"></div>
+						        		
+						        		<div class="col-md-12">
+						        			<label>#{msg['ocorrencia.descricao']}*:</label>
+						        			<h:inputText maxlength="110" required="true" styleClass="form-control" label="#{msg['ocorrencia.descricao']}" value="#{ocorrenciaView.ocorrencia.descricao}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['ocorrencia.descricao']}" />
+						        			</h:inputText>
+										</div>
+						        		
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">#{msg['botao.fechar']}</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="#{msg['botao.salvar']}" 
+			            			action="#{ocorrenciaView.salvarOcorrencia()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			#{msg['ocorrencia.titulo.pesquisa']}
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{ocorrenciaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{ocorrenciaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> #{msg['mensagem.tipo.erro']}</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!ocorrenciaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> #{msg['mensagem.tipo.sucesso']}</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>#{msg['ocorrencia.titulo.filtro']}</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="formPrincipal:panelModalDetalheOcorrencia"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesOcorrencia()">
+						        				<i class="fa fa-plus"></i> #{msg['ocorrencia.botao.adicionar']}
+						        				<f:setPropertyActionListener value="#{null}" target="#{ocorrenciaView.ocorrencia}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		
+						        		<div style="clear: both; padding-top: 10px;"></div>
+						        		
+							        	<div class="col-md-4">
+						        			<label>#{msg['ocorrencia.codigo.cip']}:</label>
+											<h:inputText 
+						        				id="codCipPesquisa"
+						        				styleClass="form-control" 
+						        				label="#{msg['ocorrencia.codigo.cip']}" 
+						        				value="#{ocorrenciaView.filtro.codCip}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['ocorrencia.codigo.cip']}" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>#{msg['ocorrencia.codigo.fd']}:</label>
+											<h:inputText 
+						        				id="codFdPesquisa"
+						        				styleClass="form-control" 
+						        				label="#{msg['ocorrencia.codigo.fd']}" 
+						        				value="#{ocorrenciaView.filtro.codFd}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['ocorrencia.codigo.fd']}" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+											<label>#{msg['ocorrencia.funcao']}:</label><br />
+											<h:selectOneMenu 
+												id="funcaoPesquisa"
+				        						styleClass="form-control"
+				        						value="#{ocorrenciaView.filtro.funcaoCodigo}" 
+												label="#{msg['ocorrencia.funcao']}"
+												style="height: 44px !important">
+												<f:selectItem itemLabel="#{msg['combo.selecione']}" itemValue="#{null}" />
+												<t:selectItems value="#{ocorrenciaView.listaFuncoesArquivo}" 
+															   var="funcArq"
+															   itemLabel="#{funcArq.descricao}"
+															   itemValue="#{funcArq.codigo}" />
+											</h:selectOneMenu>
+										</div>
+										
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="#{msg['botao.limpar']}"
+				        						update="formPrincipal:codCipPesquisa formPrincipal:codFdPesquisa formPrincipal:funcaoPesquisa formPrincipal:ocorrenciaTable formPrincipal:mensagens"
+						        				action="#{ocorrenciaView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="#{msg['botao.pesquisar']}"
+						        				action="#{ocorrenciaView.pesquisarOcorrenciaPorFiltro()}" 
+						        				update="formPrincipal:ocorrenciaTable"
+						        				process="@this,codCipPesquisa,codFdPesquisa,funcaoPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="#{msg['ocorrencia.pesquisa.nenhum.resultado']}"
+											id="ocorrenciaTable" 
+											var="ocorrencia" 
+											rows="10"
+											rowIndexVar="ocorrenciaRow" 
+											value="#{ocorrenciaView.deParaCipFdDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#{msg['ocorrencia.filtro.tabela.cod.cip']}" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{ocorrencia.codCip}" />
+											</pr:column>
+											<pr:column headerText="#{msg['ocorrencia.filtro.tabela.cod.fd']}" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{ocorrencia.codFd}" />
+											</pr:column>
+											<pr:column headerText="#{msg['ocorrencia.filtro.tabela.funcao']}" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{ocorrencia.descricaoFuncaoArquivo}" />
+											</pr:column>
+											<pr:column headerText="#{msg['ocorrencia.filtro.tabela.descricao']}" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{ocorrencia.descricao}" />
+											</pr:column>
+											<pr:column headerText="#{msg['ocorrencia.filtro.tabela.acoes']}" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{ocorrenciaView.carregarOcorrencia(ocorrencia)}"
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="#{msg['botao.excluir']}"
+													oncomplete="exibirExcluirOcorrencia();" 
+													update="formPrincipal:panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{ocorrenciaView.carregarOcorrencia(ocorrencia)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="#{msg['botao.detalhar']}"
+													oncomplete="exibirDetalhesOcorrencia();" 
+													update="formPrincipal:panelModalDetalheOcorrencia"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalOcorrencia() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesOcorrencia() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirOcorrencia() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

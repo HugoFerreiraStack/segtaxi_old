@@ -1,0 +1,10 @@
+/target/
+/bin/
+*.classpath
+*.project
+/.settings/
+*.iml
+.idea
+.DS_Store
+org.hibernate.eclipse.console.prefs
+org.eclipse.core.resources.prefs

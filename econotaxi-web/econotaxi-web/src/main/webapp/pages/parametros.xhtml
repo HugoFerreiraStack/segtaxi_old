@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<div class="modal fade" id="modalLog" tabindex="-1" role="dialog" aria-labelledby="modalLogLabel">
+		    	<div class="modal-dialog  modal-lg">
+			        <div class="modal-content">
+			        	<h:panelGroup id="panelModalLog">
+				        	<div class="modal-header">
+					            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+					            <h4 class="modal-title">Log</h4>
+				          	</div>
+			          		<div class="modal-body">
+			          			<div class="row">
+			          				<div class="col-md-12">
+			          					<h:inputTextarea value="#{parametrosView.log}" styleClass="form-control" style="height: 300px;" />
+			          				</div>
+			          			</div>
+			          		</div>
+			          	</h:panelGroup>
+			          	
+			          	<div class="modal-footer">
+		            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+		          		</div>
+			          	
+			          </div>
+		    	</div>
+		    </div>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		          			Parâmetros
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{parametrosView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{parametrosView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!parametrosView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-12" style="padding-bottom: 10px;">
+						        			<h4>Parâmetros Gerais</h4>
+						        			<hr />
+						        		</div>
+						        		<div class="col-md-12" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalLog"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												oncomplete="exibirModalLog()"
+												actionListener="#{parametrosView.visualizarLog()}">
+						        				<i class="fa fa-search"></i> Exibir Log
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+										<div class="col-md-8 col-sm-6">
+						        			<label>Servidor SMTP:</label>
+											<h:inputText 
+						        				id="servidorSMTP"
+						        				maxlength="1024"
+						        				styleClass="form-control" 
+						        				label="Servidor SMTP"
+						        				value="#{parametrosView.parametro.urlSmtp}">
+						        				<f:passThroughAttribute name="placeholder" value="Servidor SMTP" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4 col-sm-6">
+						        			<label>Porta:</label>
+											<h:inputText 
+						        				id="portaSMTP"
+						        				maxlength="1024"
+						        				styleClass="form-control" 
+						        				label="Porta" 
+						        				value="#{parametrosView.parametro.portaSmtp}">
+						        				<f:passThroughAttribute name="placeholder" value="Porta" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-8 col-sm-6">
+						        			<label>E-mail:</label>
+											<h:inputText 
+						        				id="usuarioEmail"
+						        				maxlength="500"
+						        				styleClass="form-control" 
+						        				label="E-mail"
+						        				value="#{parametrosView.parametro.usuarioEmail}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4 col-sm-6">
+						        			<label>Senha E-mail:</label>
+											<h:inputText 
+						        				id="senhaEmail"
+						        				maxlength="2048"
+						        				styleClass="form-control" 
+						        				label="Senha E-mail" 
+						        				value="#{parametrosView.parametro.senhaEmail}">
+						        				<f:passThroughAttribute name="placeholder" value="Senha E-mail" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6 col-sm-6">
+						        			<label>Nome do Aplicativo:</label>
+											<h:inputText 
+						        				id="nomeAplicativo"
+						        				maxlength="500"
+						        				styleClass="form-control" 
+						        				label="Nome do Aplicativo"
+						        				value="#{parametrosView.parametro.nomeAplicativo}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Aplicativo" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6 col-sm-6">
+						        			<label>E-mail Corridas Rádio:</label>
+											<h:inputText 
+						        				id="emailCorridasTele"
+						        				maxlength="500"
+						        				styleClass="form-control" 
+						        				label="E-mail Corridas Rádio" 
+						        				value="#{parametrosView.parametro.emailCorridasTele}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail Corridas Rádio" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6 col-sm-6">
+						        			<label>Usuário SMS:</label>
+											<h:inputText 
+						        				id="usuarioSms"
+						        				maxlength="500"
+						        				styleClass="form-control" 
+						        				label="Usuário SMS"
+						        				value="#{parametrosView.parametro.usuarioSms}">
+						        				<f:passThroughAttribute name="placeholder" value="Usuário SMS" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6 col-sm-6">
+						        			<label>Senha SMS:</label>
+											<h:inputText 
+						        				id="senhaSms"
+						        				maxlength="500"
+						        				styleClass="form-control" 
+						        				label="Senha SMS" 
+						        				value="#{parametrosView.parametro.senhaSms}">
+						        				<f:passThroughAttribute name="placeholder" value="Senha SMS" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-4 col-sm-6">
+						        			<label>Versão do App (Android):</label>
+											<h:inputText 
+						        				id="versaoApp"
+						        				maxlength="50"
+						        				styleClass="form-control" 
+						        				label="Versão do App" 
+						        				value="#{parametrosView.parametro.versaoApp}">
+						        				<f:passThroughAttribute name="placeholder" value="Versão do App (Android)" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4 col-sm-6">
+						        			<label>Versão do App (Android - Passageiro):</label>
+											<h:inputText 
+						        				id="versaoAppPassageiro"
+						        				maxlength="50"
+						        				styleClass="form-control" 
+						        				label="Versão do App" 
+						        				value="#{parametrosView.parametro.versaoAppPassageiro}">
+						        				<f:passThroughAttribute name="placeholder" value="Versão do App (Android - Passageiro)" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4 col-sm-6">
+						        			<label>Versão do App (IOS):</label>
+											<h:inputText 
+						        				id="versaoAppIos"
+						        				maxlength="50"
+						        				styleClass="form-control" 
+						        				label="Versão do App" 
+						        				value="#{parametrosView.parametro.versaoAppIos}">
+						        				<f:passThroughAttribute name="placeholder" value="Versão do App (IOS)" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6 col-sm-6">
+											<label>Corridas PA:</label>
+						        			<h:selectOneMenu 
+						        				id="corridasPa"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{parametrosView.parametro.indicadorTipoCorridaTele}" 
+												label="Corridas PA">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Por Proximidade" itemValue="1" />
+												<f:selectItem itemLabel="Por Região" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12">
+						        			<label>Host:</label>
+											<h:inputText 
+						        				id="host"
+						        				maxlength="1024"
+						        				styleClass="form-control" 
+						        				label="Host" 
+						        				value="#{parametrosView.parametro.host}">
+						        				<f:passThroughAttribute name="placeholder" value="Host" />
+						        			</h:inputText>
+										</div>
+										
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+										
+						        			<pr:commandLink 
+						        				styleClass="btn btn-primary" 
+						        				value="Salvar"
+						        				action="#{parametrosView.salvarParametros()}" 
+						        				update="formPrincipal"
+						        				process="@this,servidorSMTP,host,emailCorridasTele,nomeAplicativo,usuarioSms,senhaSms,versaoApp,portaSMTP,usuarioEmail,senhaEmail,corridasPa,versaoAppIos,versaoAppPassageiro" />
+				        				</div>
+						        		
+					        		</div>
+					        		
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalLog() {
+					$('#modalLog').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirModalLog() {
+					$('#modalLog').modal('show');
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:pr="http://primefaces.org/ui"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    contentType="text/html">
+    
+    	
+    <h:form prependId="false" id="formularioMenu">
+    	
+    	<h:inputHidden id="textoAlerta" value="#{menuView.textoAlerta}" rendered="#{loginView.verificaAutorizacao(17)}"/>
+    	
+    	<h:inputHidden id="tituloAlerta" value="Atenção" />
+    	
+		<aside class="app-sidebar" id="sidebar" style="height: 4165px !important;">
+		
+	  		<div class="sidebar-header">
+			    <a class="sidebar-brand" href="#">
+			    	<img class="profile-img" src="#{loginView.logoLogin}" style="width: 120px;" />
+			    </a>
+			    <button type="button" class="sidebar-toggle">
+			    	<i class="fa fa-times"></i>
+			    </button>
+		  	</div>
+		  	
+			<div class="sidebar-menu">
+				<span style="clear: both; font-weight: bold;"></span>
+				<ul class="sidebar-nav" style="padding-top: 10px;">
+		      		<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(1)}" class="#{menuView.identificadorMenu eq 1 ? 'active' : ''}">
+		      			<h:commandLink immediate="true" action="#{menuView.carregarMenu(1, 'inicio')}">
+		          			<div class="icon">
+		            			<i class="fa fa-tasks" aria-hidden="true"></i>
+		          			</div>
+		          			<div class="title">Dashboard</div>
+		      			</h:commandLink>
+		      		</t:htmlTag>
+		      		<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(7)}" class="#{menuView.identificadorMenu eq 7 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(7, 'cidade')}">
+			          		<div class="icon">
+			            		<i class="fa fa-building" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Cidades</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(4)}" class="#{menuView.identificadorMenu eq 4 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(4, 'motorista')}">
+			          		<div class="icon">
+			            		<i class="fa fa-taxi" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Motoristas</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(39)}" class="#{menuView.identificadorMenu eq 39 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(39, 'motoristaLigue')}">
+			          		<div class="icon">
+			            		<i class="fa fa-taxi" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Motoristas Ligue</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+				 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(8)}" class="#{menuView.identificadorMenu eq 8 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(8, 'veiculo')}">
+			          		<div class="icon">
+			            		<i class="fa fa-car" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Veículos</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(38)}" class="#{menuView.identificadorMenu eq 38 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(38, 'veiculoLigue')}">
+			          		<div class="icon">
+			            		<i class="fa fa-car" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Veículos Ligue</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(11)}" class="#{menuView.identificadorMenu eq 11 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(11, 'passageiro')}">
+			          		<div class="icon">
+			            		<i class="fa fa-male" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Passageiros</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+				 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(2)}" class="#{menuView.identificadorMenu eq 2 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(2, 'perfil')}">
+			          		<div class="icon">
+			            		<i class="fa fa-sitemap" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Perfis</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+				 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(3)}" class="#{menuView.identificadorMenu eq 3 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(3, 'usuario')}">
+			          		<div class="icon">
+			            		<i class="fa fa-users" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Usuários</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(18)}" class="#{menuView.identificadorMenu eq 18 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(18, 'lojista')}">
+			          		<div class="icon">
+			            		<i class="fa fa-shopping-bag" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Lojistas</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(9)}" class="#{menuView.identificadorMenu eq 9 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(9, 'transacao')}">
+			          		<div class="icon">
+			            		<i class="fa fa-credit-card" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Transações</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(6)}" class="#{menuView.identificadorMenu eq 6 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(6, 'corrida')}">
+			          		<div class="icon">
+			            		<i class="fa fa-road" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Corridas App</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(23)}" class="#{menuView.identificadorMenu eq 23 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(23, 'corridaTeleTaxi')}">
+			          		<div class="icon">
+			            		<i class="fa fa-road" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Corridas</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(28)}" class="#{menuView.identificadorMenu eq 28 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(28, 'motoristaTeleTaxi')}">
+			          		<div class="icon">
+			            		<i class="fa fa-taxi" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Motoristas Rádio</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(27)}" class="#{menuView.identificadorMenu eq 27 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(27, 'mapaTeleTaxi')}">
+			          		<div class="icon">
+			            		<i class="fa fa-map" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Mapa PA/Veículos</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(33)}" class="#{menuView.identificadorMenu eq 33 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(33, 'quadroTeleTaxi')}">
+			          		<div class="icon">
+			            		<i class="fa fa-table" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Quadro PA/Veículos</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(25)}" class="#{menuView.identificadorMenu eq 25 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(25, 'clienteTeleTaxi')}">
+			          		<div class="icon">
+			            		<i class="fa fa-male" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Clientes Rádio</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(29)}" class="#{menuView.identificadorMenu eq 29 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(29, 'empresaConveniada')}">
+			          		<div class="icon">
+			            		<i class="fa fa-suitcase" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Empresa Conveniada</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(44)}" class="#{menuView.identificadorMenu eq 44 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(44, 'centroCusto')}">
+			          		<div class="icon">
+			            		<i class="fa fa-cogs" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Centro de Custo</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(31)}" class="#{menuView.identificadorMenu eq 31 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(31, 'relatorioEmpresa')}">
+			          		<div class="icon">
+			            		<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rel. Consumo Mensal</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(32)}" class="#{menuView.identificadorMenu eq 32 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(32, 'relatorioMotorista')}">
+			          		<div class="icon">
+			            		<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rel. Motoristas de Rádio</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(41)}" class="#{menuView.identificadorMenu eq 41 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(41, 'relatorioVeiculoVoucher')}">
+			          		<div class="icon">
+			            		<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rel. Veículos x Voucher</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(42)}" class="#{menuView.identificadorMenu eq 42 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(42, 'usuarioAppEmpresa')}">
+			          		<div class="icon">
+			            		<i class="fa fa-mobile" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Usuário APP Empresa</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(43)}" class="#{menuView.identificadorMenu eq 43 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(43, 'carrosSelecionados')}">
+			          		<div class="icon">
+			            		<i class="fa fa-car" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Veículos Selecionados</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(40)}" class="#{menuView.identificadorMenu eq 40 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(40, 'relatorioMotoristaCredito')}">
+			          		<div class="icon">
+			            		<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rel. Motorista Créd.</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(15)}" class="#{menuView.identificadorMenu eq 15 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(15, 'entrega')}">
+			          		<div class="icon">
+			            		<i class="fa fa-gift" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Entregas</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(24)}" class="#{menuView.identificadorMenu eq 24 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(24, 'localidade')}">
+			          		<div class="icon">
+			            		<i class="fa fa-map-marker" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Localidades</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(10)}" class="#{menuView.identificadorMenu eq 10 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(10, 'pacote')}">
+			          		<div class="icon">
+			            		<i class="fa fa-map" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Pacotes</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(12)}" class="#{menuView.identificadorMenu eq 12 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(12, 'radio')}">
+			          		<div class="icon">
+			            		<i class="fa fa-music" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rádios</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(16)}" class="#{menuView.identificadorMenu eq 16 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(16, 'notificacoes')}">
+			          		<div class="icon">
+			            		<i class="fa fa-bullhorn" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Notificações</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(17)}" class="#{menuView.identificadorMenu eq 17 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(17, 'novidades')}">
+			          		<div class="icon">
+			            		<i class="fa fa-bell" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Novidades</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(19)}" class="#{menuView.identificadorMenu eq 19 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(19, 'promocoes')}">
+			          		<div class="icon">
+			            		<i class="fa fa-percent" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Promoções</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(13)}" class="#{menuView.identificadorMenu eq 13 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(13, 'auditoria')}">
+			          		<div class="icon">
+			            		<i class="fa fa-user-secret" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Auditoria</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(20)}" class="#{menuView.identificadorMenu eq 20 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(20, 'feriado')}">
+			          		<div class="icon">
+			            		<i class="fa fa-calendar" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Feriados</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(21)}" class="#{menuView.identificadorMenu eq 21 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(21, 'rateio')}">
+			          		<div class="icon">
+			            		<i class="fa fa-globe" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Rateio</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+			      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(14)}" class="#{menuView.identificadorMenu eq 14 ? 'active' : ''}" immediate="true">
+			        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(14, 'parametros')}">
+			          		<div class="icon">
+			            		<i class="fa fa-gears" aria-hidden="true"></i>
+			          		</div>
+			          		<div class="title">Parâmetros</div>
+			        	</h:commandLink>
+			      	</t:htmlTag>
+				</ul>
+				
+			</div>
+			
+		</aside>
+	</h:form>
+    
+</f:view>

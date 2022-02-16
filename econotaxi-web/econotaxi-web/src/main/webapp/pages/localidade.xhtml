@@ -1,0 +1,1312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<h:inputHidden id="nomeCidadeMapa" value="#{localidadeView.cidadeMapa}" />
+			<h:inputHidden id="formaLocalidade" value="#{localidadeView.localidade.formaDesenho}" />
+			<h:inputHidden id="coordenadasLocalidade" value="#{localidadeView.localidade.coordenadas}" />
+			<h:inputHidden id="coordenadasLocalidadeAlterar" value="#{localidadeView.localidadeAlterar.coordenadas}" />
+			<h:inputHidden id="latitudeLocalidadeExistente" value="#{localidadeView.localidade.latitude1}" />
+			<h:inputHidden id="longitudeLocalidadeExistente" value="#{localidadeView.localidade.longitude1}" />
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Excluir</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o Localidade?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens localidadeTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{localidadeView.excluirLocalidade()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalLocalizacao" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalLocalizacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Nova Localidade</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Cidade*:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadeLocalidadeEscolha"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.cidade}" 
+												label="Cidade"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{localidadeView.cidades}" var="cidade" itemLabel="#{cidade.nome} / #{cidade.siglaUf}" itemValue="#{cidade}" />
+												<pr:ajax event="change" process="@this" update="nomeCidadeMapa pontosRegiao" oncomplete="mudarLocalidadeMapa('googleMap')" listener="#{localidadeView.definirNomeCidade}">
+													<f:setPropertyActionListener value="#{localidadeView.localidade.cidade.nome}" target="#{localidadeView.cidadeMapa}" />
+												</pr:ajax>
+											</h:selectOneMenu>
+										</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Tipo de Localidade*:</label>
+						        			<h:selectOneMenu 
+						        				id="tipoLocalidadeEscolha"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.tipo}" 
+												label="Tipo de Localidade"
+												rendered="#{not empty localidadeView.usuarioTeleTaxi and not empty localidadeView.usuarioTeleTaxi.id}">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ponto de Apoio (Táxi)" itemValue="1" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="tipoLocalidadeEscolha2"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.tipo}" 
+												label="Tipo de Localidade"
+												rendered="#{empty localidadeView.usuarioTeleTaxi and empty localidadeView.usuarioTeleTaxi.id}">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ponto de Apoio (Táxi)" itemValue="1" />
+												<f:selectItem itemLabel="Região" itemValue="3" />
+												<f:selectItem itemLabel="Bairro" itemValue="2" />
+												<f:selectItem itemLabel="Aeroporto" itemValue="4" />
+												<f:selectItem itemLabel="Rodoviária" itemValue="5" />
+												<f:selectItem itemLabel="Hospital" itemValue="6" />
+												<f:selectItem itemLabel="Centro Clínico" itemValue="7" />
+												<f:selectItem itemLabel="Shopping" itemValue="8" />
+												<f:selectItem itemLabel="Hotel" itemValue="9" />
+												<f:selectItem itemLabel="Pousada" itemValue="10" />
+												<f:selectItem itemLabel="Órgão Público" itemValue="11" />
+												<f:selectItem itemLabel="Parque" itemValue="12" />
+												<f:selectItem itemLabel="Estádio" itemValue="13" />
+												<f:selectItem itemLabel="Ginásio" itemValue="14" />
+												<f:selectItem itemLabel="Seasa" itemValue="15" />
+												<f:selectItem itemLabel="Porto" itemValue="16" />
+												<f:selectItem itemLabel="Praia" itemValue="17" />
+												<f:selectItem itemLabel="Lagoa" itemValue="18" />
+												<f:selectItem itemLabel="Cachoeira" itemValue="19" />
+												<pr:ajax event="change" update="pontosRegiao" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Nome*:</label>
+				          					<h:inputText id="nomeLocalidadeEscolha" styleClass="form-control" label="Nome" value="#{localidadeView.localidade.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+										<div class="col-md-4" style="clear: both; margin-top: 10px;">
+				          					<label>Horário de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+						        				id="funcionamentoEscolha"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.horarioFuncionamento}" 
+												label="Horário de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="24 horas" itemValue="1" />
+												<f:selectItem itemLabel="5h às 18h" itemValue="2" />
+												<f:selectItem itemLabel="5h às 19h" itemValue="3" />
+												<f:selectItem itemLabel="5h às 20h" itemValue="4" />
+												<f:selectItem itemLabel="5h às 21h" itemValue="5" />
+												<f:selectItem itemLabel="5h às 22h" itemValue="6" />
+												<f:selectItem itemLabel="5h às 23h" itemValue="7" />
+												<f:selectItem itemLabel="6h às 18h" itemValue="8" />
+												<f:selectItem itemLabel="6h às 19h" itemValue="9" />
+												<f:selectItem itemLabel="6h às 20h" itemValue="10" />
+												<f:selectItem itemLabel="6h às 21h" itemValue="11" />
+												<f:selectItem itemLabel="6h às 22h" itemValue="12" />
+												<f:selectItem itemLabel="6h às 23h" itemValue="13" />
+												<f:selectItem itemLabel="7h às 18h" itemValue="14" />
+												<f:selectItem itemLabel="7h às 19h" itemValue="15" />
+												<f:selectItem itemLabel="7h às 20h" itemValue="16" />
+												<f:selectItem itemLabel="7h às 21h" itemValue="17" />
+												<f:selectItem itemLabel="7h às 22h" itemValue="18" />
+												<f:selectItem itemLabel="7h às 23h" itemValue="19" />
+												<f:selectItem itemLabel="8h às 18h" itemValue="20" />
+												<f:selectItem itemLabel="8h às 19h" itemValue="21" />
+												<f:selectItem itemLabel="8h às 20h" itemValue="22" />
+												<f:selectItem itemLabel="8h às 21h" itemValue="23" />
+												<f:selectItem itemLabel="8h às 22h" itemValue="24" />
+												<f:selectItem itemLabel="8h às 23h" itemValue="25" />
+												<f:selectItem itemLabel="9h às 18h" itemValue="26" />
+												<f:selectItem itemLabel="9h às 19h" itemValue="27" />
+												<f:selectItem itemLabel="9h às 20h" itemValue="28" />
+												<f:selectItem itemLabel="9h às 21h" itemValue="29" />
+												<f:selectItem itemLabel="9h às 22h" itemValue="30" />
+												<f:selectItem itemLabel="9h às 23h" itemValue="31" />
+												<f:selectItem itemLabel="10h às 18h" itemValue="32" />
+												<f:selectItem itemLabel="10h às 19h" itemValue="33" />
+												<f:selectItem itemLabel="10h às 20h" itemValue="34" />
+												<f:selectItem itemLabel="10h às 21h" itemValue="35" />
+												<f:selectItem itemLabel="10h às 22h" itemValue="36" />
+												<f:selectItem itemLabel="10h às 23h" itemValue="37" />
+												<f:selectItem itemLabel="11h às 18h" itemValue="38" />
+												<f:selectItem itemLabel="11h às 19h" itemValue="39" />
+												<f:selectItem itemLabel="11h às 20h" itemValue="40" />
+												<f:selectItem itemLabel="11h às 21h" itemValue="41" />
+												<f:selectItem itemLabel="11h às 22h" itemValue="42" />
+												<f:selectItem itemLabel="11h às 23h" itemValue="43" />
+												<f:selectItem itemLabel="22h às 5h" itemValue="44" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Dias de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+						        				id="diasFuncionamentoEscolha"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.diasFuncionamento}" 
+												label="Dias de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Todos os dias" itemValue="1" />
+												<f:selectItem itemLabel="Segunda a Quinta" itemValue="2" />
+												<f:selectItem itemLabel="Segunda a Sexta" itemValue="3" />
+												<f:selectItem itemLabel="Segunda a Sábado" itemValue="4" />
+												<f:selectItem itemLabel="Terça a Sexta" itemValue="5" />
+												<f:selectItem itemLabel="Terça a Sábado" itemValue="6" />
+												<f:selectItem itemLabel="Terça a Domingo" itemValue="7" />
+												<f:selectItem itemLabel="Quarta a Sábado" itemValue="8" />
+												<f:selectItem itemLabel="Quarta a Domingo" itemValue="9" />
+												<f:selectItem itemLabel="Quinta a Sábado" itemValue="10" />
+												<f:selectItem itemLabel="Quinta a Domingo" itemValue="11" />
+												<f:selectItem itemLabel="Sexta a Sábado" itemValue="12" />
+												<f:selectItem itemLabel="Sexta a Domingo" itemValue="13" />
+												<f:selectItem itemLabel="Final de Semana" itemValue="14" />
+												<f:selectItem itemLabel="Final de Semana e Feriado" itemValue="15" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Observações:</label>
+				          					<h:inputText id="observacaoLocalidadeEscolha" styleClass="form-control" label="Nome" value="#{localidadeView.localidade.observacoes}">
+						        				<f:passThroughAttribute name="placeholder" value="Observações" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+				          				<div class="col-md-9" style="clear: both; margin-top: 10px;">
+				          					<label>Endereço*:</label>
+				          					<h:inputText id="enderecoLocalidadeEscolha" styleClass="form-control" label="Endereço" value="#{localidadeView.localidade.endereco}">
+						        				<f:passThroughAttribute name="placeholder" value="Endereço" />
+						        			</h:inputText>
+				          				</div>
+				          				<div class="col-md-3" style="margin-top: 10px;">
+				          					<a href="javascript:deleteAllShape();" style="margin-top: 25px;" class="btn btn-info">Limpar Mapa</a>
+				          				</div>
+				          				<br />
+				          				<t:div id="pontosRegiao" style="padding-bottom: 10px;">
+					          				<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="clear: both; margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 1*:</label>
+							        			<h:selectOneMenu 
+							        				id="pa1"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa1}" 
+													label="PA (Ponto de Apoio) 1">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 2*:</label>
+							        			<h:selectOneMenu 
+							        				id="pa2"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa2}" 
+													label="PA (Ponto de Apoio) 2">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 3:</label>
+							        			<h:selectOneMenu 
+							        				id="pa3"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa3}" 
+													label="PA (Ponto de Apoio) 3">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 4:</label>
+							        			<h:selectOneMenu 
+							        				id="pa4"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa4}" 
+													label="PA (Ponto de Apoio) 4">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<br />
+										</t:div>
+				          				<br />
+				          				<div class="col-md-12" style="padding-top: 10px;">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap" style="height: 350px;"></div>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar Localização"
+			            			process="@this, formaLocalidade, pa1, pa2, pa3, pa4, coordenadasLocalidade, cidadeLocalidadeEscolha, tipoLocalidadeEscolha, tipoLocalidadeEscolha2, nomeLocalidadeEscolha, funcionamentoEscolha, diasFuncionamentoEscolha, observacaoLocalidadeEscolha, enderecoLocalidadeEscolha"
+			            			update="mensagens localidadeTable"
+			            			oncomplete="fecharModalLocalizacao()" 
+			            			action="#{localidadeView.salvarLocalidade()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalLocalizacaoAlterar" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalLocalizacaoAlterar">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Nova Localidade</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Cidade*:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadeLocalidadeEscolhaAlterar"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidadeAlterar.cidade}" 
+												label="Cidade"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{localidadeView.cidades}" var="cidade" itemLabel="#{cidade.nome} / #{cidade.siglaUf}" itemValue="#{cidade}" />
+												<pr:ajax event="change" process="@this" update="nomeCidadeMapa pontosRegiaoAlterar" oncomplete="mudarLocalidadeMapa('googleMap')" listener="#{localidadeView.definirNomeCidade}">
+													<f:setPropertyActionListener value="#{localidadeView.localidadeAlterar.cidade.nome}" target="#{localidadeView.cidadeMapa}" />
+												</pr:ajax>
+											</h:selectOneMenu>
+										</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Tipo de Localidade*:</label>
+						        			<h:selectOneMenu 
+						        				id="tipoLocalidadeEscolhaAlterar"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidadeAlterar.tipo}" 
+												label="Tipo de Localidade"
+												rendered="#{not empty localidadeView.usuarioTeleTaxi and not empty localidadeView.usuarioTeleTaxi.id}">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ponto de Apoio (Táxi)" itemValue="1" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="tipoLocalidadeEscolhaAlterar2"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidadeAlterar.tipo}" 
+												label="Tipo de Localidade"
+												rendered="#{empty localidadeView.usuarioTeleTaxi and empty localidadeView.usuarioTeleTaxi.id}">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ponto de Apoio (Táxi)" itemValue="1" />
+												<f:selectItem itemLabel="Bairro" itemValue="2" />
+												<f:selectItem itemLabel="Região" itemValue="3" />
+												<f:selectItem itemLabel="Aeroporto" itemValue="4" />
+												<f:selectItem itemLabel="Rodoviária" itemValue="5" />
+												<f:selectItem itemLabel="Hospital" itemValue="6" />
+												<f:selectItem itemLabel="Centro Clínico" itemValue="7" />
+												<f:selectItem itemLabel="Shopping" itemValue="8" />
+												<f:selectItem itemLabel="Hotel" itemValue="9" />
+												<f:selectItem itemLabel="Pousada" itemValue="10" />
+												<f:selectItem itemLabel="Órgão Público" itemValue="11" />
+												<f:selectItem itemLabel="Parque" itemValue="12" />
+												<f:selectItem itemLabel="Estádio" itemValue="13" />
+												<f:selectItem itemLabel="Ginásio" itemValue="14" />
+												<f:selectItem itemLabel="Seasa" itemValue="15" />
+												<f:selectItem itemLabel="Porto" itemValue="16" />
+												<f:selectItem itemLabel="Praia" itemValue="17" />
+												<f:selectItem itemLabel="Lagoa" itemValue="18" />
+												<f:selectItem itemLabel="Cachoeira" itemValue="19" />
+												<pr:ajax event="change" update="pontosRegiaoAlterar" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Nome*:</label>
+				          					<h:inputText id="nomeLocalidadeEscolhaAlterar" styleClass="form-control" label="Nome" value="#{localidadeView.localidadeAlterar.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+										<div class="col-md-4" style="clear: both; margin-top: 10px;">
+				          					<label>Horário de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+						        				id="funcionamentoEscolhaAlterar"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidadeAlterar.horarioFuncionamento}" 
+												label="Horário de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="24 horas" itemValue="1" />
+												<f:selectItem itemLabel="5h às 18h" itemValue="2" />
+												<f:selectItem itemLabel="5h às 19h" itemValue="3" />
+												<f:selectItem itemLabel="5h às 20h" itemValue="4" />
+												<f:selectItem itemLabel="5h às 21h" itemValue="5" />
+												<f:selectItem itemLabel="5h às 22h" itemValue="6" />
+												<f:selectItem itemLabel="5h às 23h" itemValue="7" />
+												<f:selectItem itemLabel="6h às 18h" itemValue="8" />
+												<f:selectItem itemLabel="6h às 19h" itemValue="9" />
+												<f:selectItem itemLabel="6h às 20h" itemValue="10" />
+												<f:selectItem itemLabel="6h às 21h" itemValue="11" />
+												<f:selectItem itemLabel="6h às 22h" itemValue="12" />
+												<f:selectItem itemLabel="6h às 23h" itemValue="13" />
+												<f:selectItem itemLabel="7h às 18h" itemValue="14" />
+												<f:selectItem itemLabel="7h às 19h" itemValue="15" />
+												<f:selectItem itemLabel="7h às 20h" itemValue="16" />
+												<f:selectItem itemLabel="7h às 21h" itemValue="17" />
+												<f:selectItem itemLabel="7h às 22h" itemValue="18" />
+												<f:selectItem itemLabel="7h às 23h" itemValue="19" />
+												<f:selectItem itemLabel="8h às 18h" itemValue="20" />
+												<f:selectItem itemLabel="8h às 19h" itemValue="21" />
+												<f:selectItem itemLabel="8h às 20h" itemValue="22" />
+												<f:selectItem itemLabel="8h às 21h" itemValue="23" />
+												<f:selectItem itemLabel="8h às 22h" itemValue="24" />
+												<f:selectItem itemLabel="8h às 23h" itemValue="25" />
+												<f:selectItem itemLabel="9h às 18h" itemValue="26" />
+												<f:selectItem itemLabel="9h às 19h" itemValue="27" />
+												<f:selectItem itemLabel="9h às 20h" itemValue="28" />
+												<f:selectItem itemLabel="9h às 21h" itemValue="29" />
+												<f:selectItem itemLabel="9h às 22h" itemValue="30" />
+												<f:selectItem itemLabel="9h às 23h" itemValue="31" />
+												<f:selectItem itemLabel="10h às 18h" itemValue="32" />
+												<f:selectItem itemLabel="10h às 19h" itemValue="33" />
+												<f:selectItem itemLabel="10h às 20h" itemValue="34" />
+												<f:selectItem itemLabel="10h às 21h" itemValue="35" />
+												<f:selectItem itemLabel="10h às 22h" itemValue="36" />
+												<f:selectItem itemLabel="10h às 23h" itemValue="37" />
+												<f:selectItem itemLabel="11h às 18h" itemValue="38" />
+												<f:selectItem itemLabel="11h às 19h" itemValue="39" />
+												<f:selectItem itemLabel="11h às 20h" itemValue="40" />
+												<f:selectItem itemLabel="11h às 21h" itemValue="41" />
+												<f:selectItem itemLabel="11h às 22h" itemValue="42" />
+												<f:selectItem itemLabel="11h às 23h" itemValue="43" />
+												<f:selectItem itemLabel="22h às 5h" itemValue="44" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Dias de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+						        				id="diasFuncionamentoEscolhaAlterar"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidadeAlterar.diasFuncionamento}" 
+												label="Dias de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Todos os dias" itemValue="1" />
+												<f:selectItem itemLabel="Segunda a Quinta" itemValue="2" />
+												<f:selectItem itemLabel="Segunda a Sexta" itemValue="3" />
+												<f:selectItem itemLabel="Segunda a Sábado" itemValue="4" />
+												<f:selectItem itemLabel="Terça a Sexta" itemValue="5" />
+												<f:selectItem itemLabel="Terça a Sábado" itemValue="6" />
+												<f:selectItem itemLabel="Terça a Domingo" itemValue="7" />
+												<f:selectItem itemLabel="Quarta a Sábado" itemValue="8" />
+												<f:selectItem itemLabel="Quarta a Domingo" itemValue="9" />
+												<f:selectItem itemLabel="Quinta a Sábado" itemValue="10" />
+												<f:selectItem itemLabel="Quinta a Domingo" itemValue="11" />
+												<f:selectItem itemLabel="Sexta a Sábado" itemValue="12" />
+												<f:selectItem itemLabel="Sexta a Domingo" itemValue="13" />
+												<f:selectItem itemLabel="Final de Semana" itemValue="14" />
+												<f:selectItem itemLabel="Final de Semana e Feriado" itemValue="15" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Observações:</label>
+				          					<h:inputText id="observacaoLocalidadeEscolhaAlterar" styleClass="form-control" label="Nome" value="#{localidadeView.localidadeAlterar.observacoes}">
+						        				<f:passThroughAttribute name="placeholder" value="Observações" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+				          				<div class="col-md-9" style="clear: both; margin-top: 10px;">
+				          					<label>Endereço*:</label>
+				          					<h:inputText id="enderecoLocalidadeEscolhaAlterar" styleClass="form-control" label="Endereço" value="#{localidadeView.localidadeAlterar.endereco}">
+						        				<f:passThroughAttribute name="placeholder" value="Endereço" />
+						        			</h:inputText>
+				          				</div>
+				          				<div class="col-md-3" style="margin-top: 10px;">
+				          					<a href="javascript:deleteAllShape();" style="margin-top: 25px;" class="btn btn-info">Limpar Mapa</a>
+				          				</div>
+				          				<br />
+				          				<t:div id="pontosRegiaoAlterar" style="padding-bottom: 10px;">
+					          				<t:div rendered="#{localidadeView.localidadeAlterar.tipo eq 2 or localidadeView.localidadeAlterar.tipo eq 3}" styleClass="col-md-3" style="clear: both; margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 1*:</label>
+							        			<h:selectOneMenu 
+							        				id="paAlterar1"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidadeAlterar.idPa1}" 
+													label="PA (Ponto de Apoio) 1">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidadeAlterar.tipo eq 2 or localidadeView.localidadeAlterar.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 2*:</label>
+							        			<h:selectOneMenu 
+							        				id="paAlterar2"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidadeAlterar.idPa2}" 
+													label="PA (Ponto de Apoio) 2">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidadeAlterar.tipo eq 2 or localidadeView.localidadeAlterar.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 3*:</label>
+							        			<h:selectOneMenu 
+							        				id="paAlterar3"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidadeAlterar.idPa3}" 
+													label="PA (Ponto de Apoio) 3">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidadeAlterar.tipo eq 2 or localidadeView.localidadeAlterar.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 4*:</label>
+							        			<h:selectOneMenu 
+							        				id="paAlterar4"
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidadeAlterar.idPa4}" 
+													label="PA (Ponto de Apoio) 4">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<br />
+										</t:div>
+				          				<br />
+				          				<div class="col-md-12" style="padding-top: 10px;">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap3" style="height: 350px;"></div>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Alterar Localização"
+			            			process="@this, formaLocalidade, paAlterar1, paAlterar2, paAlterar3, paAlterar4, coordenadasLocalidadeAlterar, cidadeLocalidadeEscolhaAlterar, tipoLocalidadeEscolhaAlterar, tipoLocalidadeEscolhaAlterar2, nomeLocalidadeEscolhaAlterar, funcionamentoEscolhaAlterar, diasFuncionamentoEscolhaAlterar, observacaoLocalidadeEscolhaAlterar, enderecoLocalidadeEscolhaAlterar"
+			            			update="mensagens localidadeTable"
+			            			oncomplete="fecharModalLocalizacaoAlterar()" 
+			            			action="#{localidadeView.alterarLocalidade()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalLocalizacaoDetalhe" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalLocalizacaoDetalhe">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Detalhes da Localidade</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Cidade*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.cidade}" 
+												label="Cidade"
+												disabled="true"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{localidadeView.cidades}" var="cidade" itemLabel="#{cidade.nome} / #{cidade.siglaUf}" itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Tipo de Localidade*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.tipo}" 
+				        						disabled="true"
+												label="Tipo de Localidade">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Ponto de Apoio (Táxi)" itemValue="1" />
+												<f:selectItem itemLabel="Bairro" itemValue="2" />
+												<f:selectItem itemLabel="Região" itemValue="3" />
+												<f:selectItem itemLabel="Aeroporto" itemValue="4" />
+												<f:selectItem itemLabel="Rodoviária" itemValue="5" />
+												<f:selectItem itemLabel="Hospital" itemValue="6" />
+												<f:selectItem itemLabel="Centro Clínico" itemValue="7" />
+												<f:selectItem itemLabel="Shopping" itemValue="8" />
+												<f:selectItem itemLabel="Hotel" itemValue="9" />
+												<f:selectItem itemLabel="Pousada" itemValue="10" />
+												<f:selectItem itemLabel="Órgão Público" itemValue="11" />
+												<f:selectItem itemLabel="Parque" itemValue="12" />
+												<f:selectItem itemLabel="Estádio" itemValue="13" />
+												<f:selectItem itemLabel="Ginásio" itemValue="14" />
+												<f:selectItem itemLabel="Seasa" itemValue="15" />
+												<f:selectItem itemLabel="Porto" itemValue="16" />
+												<f:selectItem itemLabel="Praia" itemValue="17" />
+												<f:selectItem itemLabel="Lagoa" itemValue="18" />
+												<f:selectItem itemLabel="Cachoeira" itemValue="19" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Nome*:</label>
+				          					<h:inputText disabled="true" styleClass="form-control" label="Nome" value="#{localidadeView.localidade.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+										<div class="col-md-4" style="clear: both; margin-top: 10px;">
+				          					<label>Horário de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.localidade.horarioFuncionamento}" 
+				        						disabled="true"
+												label="Horário de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="24 horas" itemValue="1" />
+												<f:selectItem itemLabel="5h às 18h" itemValue="2" />
+												<f:selectItem itemLabel="5h às 19h" itemValue="3" />
+												<f:selectItem itemLabel="5h às 20h" itemValue="4" />
+												<f:selectItem itemLabel="5h às 21h" itemValue="5" />
+												<f:selectItem itemLabel="5h às 22h" itemValue="6" />
+												<f:selectItem itemLabel="5h às 23h" itemValue="7" />
+												<f:selectItem itemLabel="6h às 18h" itemValue="8" />
+												<f:selectItem itemLabel="6h às 19h" itemValue="9" />
+												<f:selectItem itemLabel="6h às 20h" itemValue="10" />
+												<f:selectItem itemLabel="6h às 21h" itemValue="11" />
+												<f:selectItem itemLabel="6h às 22h" itemValue="12" />
+												<f:selectItem itemLabel="6h às 23h" itemValue="13" />
+												<f:selectItem itemLabel="7h às 18h" itemValue="14" />
+												<f:selectItem itemLabel="7h às 19h" itemValue="15" />
+												<f:selectItem itemLabel="7h às 20h" itemValue="16" />
+												<f:selectItem itemLabel="7h às 21h" itemValue="17" />
+												<f:selectItem itemLabel="7h às 22h" itemValue="18" />
+												<f:selectItem itemLabel="7h às 23h" itemValue="19" />
+												<f:selectItem itemLabel="8h às 18h" itemValue="20" />
+												<f:selectItem itemLabel="8h às 19h" itemValue="21" />
+												<f:selectItem itemLabel="8h às 20h" itemValue="22" />
+												<f:selectItem itemLabel="8h às 21h" itemValue="23" />
+												<f:selectItem itemLabel="8h às 22h" itemValue="24" />
+												<f:selectItem itemLabel="8h às 23h" itemValue="25" />
+												<f:selectItem itemLabel="9h às 18h" itemValue="26" />
+												<f:selectItem itemLabel="9h às 19h" itemValue="27" />
+												<f:selectItem itemLabel="9h às 20h" itemValue="28" />
+												<f:selectItem itemLabel="9h às 21h" itemValue="29" />
+												<f:selectItem itemLabel="9h às 22h" itemValue="30" />
+												<f:selectItem itemLabel="9h às 23h" itemValue="31" />
+												<f:selectItem itemLabel="10h às 18h" itemValue="32" />
+												<f:selectItem itemLabel="10h às 19h" itemValue="33" />
+												<f:selectItem itemLabel="10h às 20h" itemValue="34" />
+												<f:selectItem itemLabel="10h às 21h" itemValue="35" />
+												<f:selectItem itemLabel="10h às 22h" itemValue="36" />
+												<f:selectItem itemLabel="10h às 23h" itemValue="37" />
+												<f:selectItem itemLabel="11h às 18h" itemValue="38" />
+												<f:selectItem itemLabel="11h às 19h" itemValue="39" />
+												<f:selectItem itemLabel="11h às 20h" itemValue="40" />
+												<f:selectItem itemLabel="11h às 21h" itemValue="41" />
+												<f:selectItem itemLabel="11h às 22h" itemValue="42" />
+												<f:selectItem itemLabel="11h às 23h" itemValue="43" />
+												<f:selectItem itemLabel="22h às 5h" itemValue="44" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Dias de Funcionamento*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control" style="height: 42px;"
+				        						disabled="true"
+				        						value="#{localidadeView.localidade.diasFuncionamento}" 
+												label="Dias de Funcionamento">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Todos os dias" itemValue="1" />
+												<f:selectItem itemLabel="Segunda a Quinta" itemValue="2" />
+												<f:selectItem itemLabel="Segunda a Sexta" itemValue="3" />
+												<f:selectItem itemLabel="Segunda a Sábado" itemValue="4" />
+												<f:selectItem itemLabel="Terça a Sexta" itemValue="5" />
+												<f:selectItem itemLabel="Terça a Sábado" itemValue="6" />
+												<f:selectItem itemLabel="Terça a Domingo" itemValue="7" />
+												<f:selectItem itemLabel="Quarta a Sábado" itemValue="8" />
+												<f:selectItem itemLabel="Quarta a Domingo" itemValue="9" />
+												<f:selectItem itemLabel="Quinta a Sábado" itemValue="10" />
+												<f:selectItem itemLabel="Quinta a Domingo" itemValue="11" />
+												<f:selectItem itemLabel="Sexta a Sábado" itemValue="12" />
+												<f:selectItem itemLabel="Sexta a Domingo" itemValue="13" />
+												<f:selectItem itemLabel="Final de Semana" itemValue="14" />
+												<f:selectItem itemLabel="Final de Semana e Feriado" itemValue="15" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Observações:</label>
+				          					<h:inputText disabled="true" styleClass="form-control" label="Nome" value="#{localidadeView.localidade.observacoes}">
+						        				<f:passThroughAttribute name="placeholder" value="Observações" />
+						        			</h:inputText>
+				          				</div>
+										<br />
+				          				<div class="col-md-12" style="clear: both; margin-top: 10px;">
+				          					<label>Endereço*:</label>
+				          					<h:inputText disabled="true" styleClass="form-control" label="Endereço" value="#{localidadeView.localidade.endereco}">
+						        				<f:passThroughAttribute name="placeholder" value="Endereço" />
+						        			</h:inputText>
+				          				</div>
+				          				<br />
+				          				<t:div style="padding-bottom: 10px;">
+					          				<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="clear: both; margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 1*:</label>
+							        			<h:selectOneMenu 
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa1}" 
+					        						disabled="true"
+													label="PA (Ponto de Apoio) 1">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 2*:</label>
+							        			<h:selectOneMenu 
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa2}" 
+					        						disabled="true"
+													label="PA (Ponto de Apoio) 2">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 3*:</label>
+							        			<h:selectOneMenu 
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa3}" 
+					        						disabled="true"
+													label="PA (Ponto de Apoio) 3">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<t:div rendered="#{localidadeView.localidade.tipo eq 2 or localidadeView.localidade.tipo eq 3}" styleClass="col-md-3" style="margin-top: 10px;">
+					          					<label>PA (Ponto de Apoio) 4*:</label>
+							        			<h:selectOneMenu 
+					        						styleClass="form-control" style="height: 42px;"
+					        						value="#{localidadeView.localidade.idPa4}" 
+					        						disabled="true"
+													label="PA (Ponto de Apoio) 4">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{localidadeView.localidades}" var="localidade" itemLabel="#{localidade.nome}" itemValue="#{localidade.id}" />
+												</h:selectOneMenu>
+											</t:div>
+											<br />
+										</t:div>
+				          				<br />
+				          				<div class="col-md-12" style="padding-top: 10px;">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap2" style="height: 350px;"></div>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{localidadeView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{localidadeView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!localidadeView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalLocalizacao"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesLocalidade()">
+						        				<i class="fa fa-plus"></i> Adicionar Localidade
+						        				<f:setPropertyActionListener value="#{null}" target="#{localidadeView.localidade}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Nome da Localidade:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Localidade" 
+						        				value="#{localidadeView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome da Localidade" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Cidade:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadePesquisa"
+				        						styleClass="form-control" style="height: 42px;"
+				        						value="#{localidadeView.filtro.cidade}" 
+												label="Cidade"
+												converter="indexConverter">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{localidadeView.cidades}" var="cidade" itemLabel="#{cidade.nome} / #{cidade.siglaUf}" itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa cidadePesquisa localidadeTable mensagens"
+						        				action="#{localidadeView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{localidadeView.pesquisarLocalidadePorFiltro()}" 
+						        				update="localidadeTable"
+						        				process="@this,nomePesquisa,cidadePesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="localidadeTable" 
+											var="localidade" 
+											rows="10"
+											rowIndexVar="localidadeRow" 
+											value="#{localidadeView.localidadeDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{localidadeRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{localidade.nome}" />
+											</pr:column>
+											<pr:column headerText="Endereço" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{localidade.endereco}" />
+											</pr:column>
+											<pr:column headerText="Tipo" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText rendered="#{localidade.tipo eq 1}" value="Ponto de Apoio" />
+												<h:outputText rendered="#{localidade.tipo eq 2}" value="Bairro" />
+												<h:outputText rendered="#{localidade.tipo eq 3}" value="Região" />
+											</pr:column>
+											<pr:column headerText="Cidade / UF" style="text-align: left; font-size: 85%; width: 180px;">
+												<h:outputText value="#{localidade.cidade.nome}" /> / <h:outputText value="#{localidade.cidade.siglaUf}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 140px;">
+												<pr:commandLink 
+													action="#{localidadeView.carregarLocalidade(localidade)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Excluir Localidade"
+													oncomplete="exibirExcluirLocalidade();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{localidadeView.carregarLocalidade(localidade)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar Localidade"
+													oncomplete="exibirLocalidadeDetalhes('#{localidade.cidade.nome}', '#{localidade.coordenadas}');" 
+													update="panelModalLocalizacaoDetalhe"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{localidadeView.carregarLocalidadeAlterar(localidade)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Alterar Localidade"
+													oncomplete="exibirLocalidadeDetalhesAlterar('#{localidade.cidade.nome}', '#{localidade.coordenadas}');" 
+													update="panelModalLocalizacaoAlterar coordenadasLocalidadeAlterar"
+													process="@this">
+													<span class="fa fa-edit"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="localidadeTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="localidadeTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="localidadeTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script src="https://maps.google.com/maps/api/js?file=api&amp;v=3&amp;libraries=drawing&amp;key=AIzaSyBqwOrp--K7rhl--mQvsdIqwSX4voNqR1g"></script>
+			
+			<h:outputScript>
+	    		//<![CDATA[	
+			 	var map;
+			 	var center;
+			 	var marker;
+			 	var latitude;
+			 	var longitude;
+			 	var cityCircle;
+			 	var boundsRectangle;
+			 	var boundsPolygon;
+			 	var coordenadas = "";
+			 	var tipo;
+			 	var poligono;
+			 	var all_overlays = [];
+			 	
+			 	$( document ).ready(function() {
+			 		
+				 	$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+					    google.maps.event.trigger(map, "resize");
+					    
+					});
+				 	
+				 	$('#modalLocalizacaoDetalhe').on('shown.bs.modal', function () {
+				 	
+				 		var drawingManager = new google.maps.drawing.DrawingManager();
+				 		console.log(coordenadas);
+				 		var coord = coordenadas.split(',');
+				 		var coordArray = [];
+				 		
+				 		if ($('#nomeCidadeMapa').val() != null || $('#nomeCidadeMapa').val() != '') {
+				 		
+							var cidade = $('#nomeCidadeMapa').val();
+							var geocoder = new google.maps.Geocoder();
+							var address = cidade;
+							
+							geocoder.geocode( { 'address': address }, function(results, status) {
+								
+								if (status == google.maps.GeocoderStatus.OK) {
+								
+									latitude = results[0].geometry.location.lat();
+									longitude = results[0].geometry.location.lng();
+									
+									center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+									
+							        map = new google.maps.Map(document.getElementById('googleMap2'), {
+							          zoom: 12,
+							          mapTypeId: google.maps.MapTypeId.ROADMAP,
+							          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+							        });
+							        
+							        for (var i = 0 ; i < (coord.length - 1); i+=2) {
+							 			var latA = parseFloat(coord[i]);
+							 			var lngA = parseFloat(coord[i+1]);
+							 			coordArray.push({lat: latA, lng: lngA});
+							 			
+							 		}
+							 		
+							        // Construct the polygon.
+							        var poligono = new google.maps.Polygon({
+							          paths: coordArray,
+							          strokeColor: '#FF0000',
+							          strokeOpacity: 0.8,
+							          strokeWeight: 2,
+							          fillColor: '#FF0000',
+							          fillOpacity: 0.35,
+							          map: map
+							        });
+							        
+							        console.log(map);
+							        
+							        poligono.setMap(map);
+							        
+							        console.log(poligono);
+							        
+							        google.maps.event.trigger(map, "resize");
+							        
+							     }
+							     
+							});
+				 		
+				 		}
+				        
+				        coordenadas = '';
+				 		
+				 	});
+				 	
+				 	$('#modalLocalizacaoAlterar').on('shown.bs.modal', function () {
+				 	
+				 		var drawingManager = new google.maps.drawing.DrawingManager();
+				 		console.log(coordenadas);
+				 		var coord = coordenadas.split(',');
+				 		var coordArray = [];
+				 		
+				 		if ($('#nomeCidadeMapa').val() != null || $('#nomeCidadeMapa').val() != '') {
+				 		
+							var cidade = $('#nomeCidadeMapa').val();
+							var geocoder = new google.maps.Geocoder();
+							var address = cidade;
+							
+							geocoder.geocode( { 'address': address }, function(results, status) {
+								
+								if (status == google.maps.GeocoderStatus.OK) {
+								
+									latitude = results[0].geometry.location.lat();
+									longitude = results[0].geometry.location.lng();
+									
+									center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+									
+							        map = new google.maps.Map(document.getElementById('googleMap3'), {
+							          zoom: 12,
+							          mapTypeId: google.maps.MapTypeId.ROADMAP,
+							          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+							        });
+							        
+							        for (var i = 0 ; i < (coord.length - 1); i+=2) {
+							 			var latA = parseFloat(coord[i]);
+							 			var lngA = parseFloat(coord[i+1]);
+							 			coordArray.push({lat: latA, lng: lngA});
+							 			
+							 		}
+							 		
+							        // Construct the polygon.
+							        var poligonoDesenhado = new google.maps.Polygon({
+							          paths: coordArray,
+							          strokeColor: '#FF0000',
+							          strokeOpacity: 0.8,
+							          strokeWeight: 2,
+							          fillColor: '#FF0000',
+							          fillOpacity: 0.35,
+							          editable: true, 
+							          map: map
+							        });
+							        
+							        console.log(map);
+							        
+							        poligonoDesenhado.setMap(map);
+							        
+							        console.log(poligono);
+							        
+							        google.maps.event.trigger(map, "resize");
+							        
+							        google.maps.event.addListener(poligonoDesenhado.getPath(), 'insert_at', function(index, obj) {
+							            var coordenadas2 = '';
+							            var coords2 = [];
+							            console.log(poligonoDesenhado.getPath().length);
+							            for (var i = 0 ; i < poligonoDesenhado.getPath().length; i++) {
+							            	coordenadas2 = coordenadas2 + "" + poligonoDesenhado.getPath().getAt(i).lat() + ",";
+							            	coordenadas2 = coordenadas2 + "" + poligonoDesenhado.getPath().getAt(i).lng() + ",";
+							            	console.log("lat: " + poligonoDesenhado.getPath().getAt(i).lat());
+							            	console.log("lng: " + poligonoDesenhado.getPath().getAt(i).lng());
+							              coords2.push({
+							                latitude: poligonoDesenhado.getPath().getAt(i).lat(),
+							                longitude: poligonoDesenhado.getPath().getAt(i).lng()
+							              });
+							            }
+										console.log(coordenadas2);
+										$('#coordenadasLocalidadeAlterar').val(coordenadas2);
+								    });
+								    google.maps.event.addListener(poligonoDesenhado.getPath(), 'set_at', function(index, obj) {
+							            var coordenadas2 = '';
+							            var coords2 = [];
+							            console.log(poligonoDesenhado.getPath().length);
+							            for (var i = 0 ; i < poligonoDesenhado.getPath().length; i++) {
+							            	coordenadas2 = coordenadas2 + "" + poligonoDesenhado.getPath().getAt(i).lat() + ",";
+							            	coordenadas2 = coordenadas2 + "" + poligonoDesenhado.getPath().getAt(i).lng() + ",";
+							            	console.log("lat: " + poligonoDesenhado.getPath().getAt(i).lat());
+							            	console.log("lng: " + poligonoDesenhado.getPath().getAt(i).lng());
+							              coords2.push({
+							                latitude: poligonoDesenhado.getPath().getAt(i).lat(),
+							                longitude: poligonoDesenhado.getPath().getAt(i).lng()
+							              });
+							            }
+										console.log(coordenadas2);
+										$('#coordenadasLocalidadeAlterar').val(coordenadas2);
+								    });
+							        
+							     }
+							     
+							});
+							
+				 		}
+				        
+				        coordenadas = '';
+				 		
+				 	});
+				 	
+			 	});
+			 	
+				function fecharModalLocalidade() {
+					$('#modalLocalizacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesLocalidade() {
+					$('#modalLocalizacao').modal('show');
+				}
+				function exibirExcluirLocalidade() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function exibirLocalidadeDetalhes(local, coord) {
+					$('#nomeCidadeMapa').val(local);
+					coordenadas = coord;
+					$('#modalLocalizacaoDetalhe').modal('show');
+				}
+				
+				function exibirLocalidadeDetalhesAlterar(local, coord) {
+					$('#nomeCidadeMapa').val(local);
+					coordenadas = coord;
+					$('#modalLocalizacaoAlterar').modal('show');
+				}
+				
+				function mudarLocalidadeMapa(idMapa) {
+				
+					poligono = null;
+					var drawingManager = new google.maps.drawing.DrawingManager();
+					if ($('#nomeCidadeMapa').val() != null || $('#nomeCidadeMapa').val() != '') {
+						var cidade = $('#nomeCidadeMapa').val();
+						var geocoder = new google.maps.Geocoder();
+						var address = cidade;
+						
+						geocoder.geocode( { 'address': address }, function(results, status) {
+							
+							if (status == google.maps.GeocoderStatus.OK) {
+								latitude = results[0].geometry.location.lat();
+								longitude = results[0].geometry.location.lng();
+								
+								center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+								
+						        map = new google.maps.Map(document.getElementById(idMapa), {
+						          zoom: 12,
+						          mapTypeId: google.maps.MapTypeId.ROADMAP,
+						          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+						        });
+						        
+						        if (idMapa == 'googleMap' || idMapa == 'googleMap3') {
+						        
+							        drawingManager.setOptions({
+							            drawingMode : google.maps.drawing.OverlayType.POLYGON,
+							            drawingControl : true,
+							            drawingControlOptions : {
+							                position : google.maps.ControlPosition.TOP_CENTER,
+							                drawingModes: ['polygon']
+							            },
+							            polygonOptions: {editable:true,fillColor:'#ff0000',strokeColor:'#ff0000',strokeWeight:2} 
+							        });
+							        
+							        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(overlay) {
+							        	
+							        	deleteAllShape();
+							        	coordenadas = '';
+							        	$('#coordenadasLocalidade').val('');
+							        	$('#coordenadasLocalidadeAlterar').val('');
+							        	all_overlays = [];
+							        	if (overlay.type.toString() == "polygon") {
+							        	
+							                poligono = overlay.overlay.getPath();
+							                tipo = 1;
+							                $('#formaLocalidade').val(tipo);
+							        		console.log('poligono completo');
+								        	all_overlays.push(overlay);
+								        	var bounds = new google.maps.LatLngBounds();
+								        	console.log(overlay);
+								        	console.log(overlay.overlay);
+								        	
+								        	google.maps.event.addListener(overlay.overlay.getPath(), 'insert_at', function(index, obj) {
+										            var coordenadas2 = '';
+										            var coords2 = [];
+										            console.log(poligono.length);
+										            for (var i = 0 ; i < poligono.length; i++) {
+										            	coordenadas2 = coordenadas2 + "" + poligono.getAt(i).lat() + ",";
+										            	coordenadas2 = coordenadas2 + "" + poligono.getAt(i).lng() + ",";
+										            	console.log("lat: " + poligono.getAt(i).lat());
+										            	console.log("lng: " + poligono.getAt(i).lng());
+										              coords2.push({
+										                latitude: poligono.getAt(i).lat(),
+										                longitude: poligono.getAt(i).lng()
+										              });
+										            }
+													console.log(coordenadas2);
+													$('#coordenadasLocalidade').val(coordenadas2);
+													$('#coordenadasLocalidadeAlterar').val(coordenadas2);
+										    });
+										    google.maps.event.addListener(overlay.overlay.getPath(), 'set_at', function(index, obj) {
+										            var coordenadas2 = '';
+										            var coords2 = [];
+										            console.log(poligono.length);
+										            for (var i = 0 ; i < poligono.length; i++) {
+										            	coordenadas2 = coordenadas2 + "" + poligono.getAt(i).lat() + ",";
+										            	coordenadas2 = coordenadas2 + "" + poligono.getAt(i).lng() + ",";
+										            	console.log("lat: " + poligono.getAt(i).lat());
+										            	console.log("lng: " + poligono.getAt(i).lng());
+										              coords2.push({
+										                latitude: poligono.getAt(i).lat(),
+										                longitude: poligono.getAt(i).lng()
+										              });
+										            }
+													console.log(coordenadas2);
+													$('#coordenadasLocalidade').val(coordenadas2);
+													$('#coordenadasLocalidadeAlterar').val(coordenadas2);
+										    });
+								        	
+								        	console.log(overlay.overlay.getPath().getArray());
+								        	
+								        	var path = overlay.overlay.getPath();
+								            var coords = [];
+								            console.log(path.length);
+								            for (var i = 0 ; i < path.length; i++) {
+								            	coordenadas = coordenadas + "" + path.getAt(i).lat() + ",";
+								            	coordenadas = coordenadas + "" + path.getAt(i).lng() + ",";
+								            	console.log("lat: " + path.getAt(i).lat());
+								            	console.log("lng: " + path.getAt(i).lng());
+								              coords.push({
+								                latitude: path.getAt(i).lat(),
+								                longitude: path.getAt(i).lng()
+								              });
+								            }
+								        	
+											console.log(coordenadas);
+											$('#coordenadasLocalidade').val(coordenadas);
+											$('#coordenadasLocalidadeAlterar').val(coordenadas);
+											drawingManager.setDrawingMode(null);
+								            
+							            } else if (overlay.type.toString() == "rectangle") {
+								        	
+								        	tipo = 2;
+								        	$('#formaLocalidade').val(tipo);
+								        	deleteAllShape();
+							            	console.log('retangulo completo');
+								        	all_overlays.push(overlay);
+								            var rectangle = overlay;
+								            var bounds = overlay.overlay.getBounds();
+								            var start = bounds.getNorthEast();
+								            var end = bounds.getSouthWest();
+								            boundsRectangle = bounds.toUrlValue(6);
+								            console.log(bounds.toUrlValue(6));
+								            coordenadas = bounds.toUrlValue(6);
+								            $('#coordenadasLocalidade').val(coordenadas);
+								            $('#coordenadasLocalidadeAlterar').val(coordenadas);
+							            }
+							        	
+							        });
+							        
+							        // Loading the drawing Tool in the Map.
+							        drawingManager.setMap(map);
+								}
+						    }
+							
+						});
+						
+					}
+					return map;
+				}
+				
+				function deleteAllShape() {
+			  		for (var i=0; i < all_overlays.length; i++) {
+			  			all_overlays[i].overlay.setMap(null);
+					}
+					all_overlays = [];
+				}
+				
+				function fecharModalLocalizacao() {
+					$('#modalLocalizacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function fecharModalLocalizacaoAlterar() {
+					$('#modalLocalizacaoAlterar').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				//]]>
+	    	</h:outputScript>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

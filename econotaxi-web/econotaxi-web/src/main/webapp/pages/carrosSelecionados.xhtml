@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+		
+			<style>
+				.controls {
+			        margin-top: 10px;
+			        border: 1px solid transparent;
+			        border-radius: 2px 0 0 2px;
+			        box-sizing: border-box;
+			        -moz-box-sizing: border-box;
+			        height: 32px;
+			        outline: none;
+			        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			    }
+			    
+			    .pac-container {
+			    	z-index: 999999 !important;
+			    }
+			</style>
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o veículo?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens veiculoTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{carrosSelecionadosView.excluirVeiculo()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			    
+			    <div class="modal fade" id="modalDetalheAtivacao" tabindex="-1" role="dialog" aria-labelledby="myModalAtivacaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheAtivacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Inclusão</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente incluir o veículo?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Incluir"
+			            			process="@this"
+			            			update="mensagens veiculoTable"
+			            			oncomplete="fecharModalInclusao()" 
+			            			action="#{carrosSelecionadosView.incluirVeiculo()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Usuário APP Empresa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{carrosSelecionadosView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{carrosSelecionadosView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!carrosSelecionadosView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro do Relatório</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-4" style="clear: both;">
+						        			<label>Empresa Conveniada*:</label>
+						        			<h:selectOneMenu 
+						        				id="empresaConveniadaCorridaNova"
+				        						styleClass="form-control"
+				        						value="#{carrosSelecionadosView.empresaConveniada}" 
+												label="Empresa Conveniada"
+												required="true"
+												converter="indexConverter"
+												disabled="#{not empty carrosSelecionadosView.usuarioTele.idEmpresaConveniada}"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{carrosSelecionadosView.empresas}" 
+															   var="empresa"
+															   itemLabel="#{empresa.nome}"
+															   itemValue="#{empresa}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4">
+						        			<label>Nome do Motorista:</label>
+						        			<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Usuário" 
+						        				value="#{carrosSelecionadosView.filtro.nomeMotoristaLogado}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Motorista" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Placa do Veículo:</label>
+						        			<h:inputText 
+						        				id="placaPesquisa"
+						        				styleClass="form-control placa" 
+						        				label="Placa do Veículo" 
+						        				value="#{carrosSelecionadosView.filtro.placa}">
+						        				<f:passThroughAttribute name="placeholder" value="Placa do Veículo" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-4" style="clear: both;">
+						        			<label>Situação do Veículo:</label>
+						        			<h:selectOneMenu 
+						        				id="situacaoVeiculoEmpresaConveniadaCorridaNova"
+				        						styleClass="form-control"
+				        						value="#{carrosSelecionadosView.filtro.indicadorPossuiEmpresaAssociada}" 
+												label="Situação do Veículo"
+												converter="javax.faces.Integer"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Apenas Carros Associados" itemValue="1" />
+												<f:selectItem itemLabel="Apenas Carros Não Associados" itemValue="2" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4">
+						        			<label>Unidade do Veículo:</label>
+						        			<h:inputText 
+						        				id="unidadePesquisa"
+						        				styleClass="form-control" 
+						        				label="Unidade do Veículo" 
+						        				value="#{carrosSelecionadosView.filtro.unidade}">
+						        				<f:passThroughAttribute name="placeholder" value="Unidade do Veículo" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-12" style="clear: both; text-align: right; margin-top: 10px;">
+
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar Veículos"
+						        				action="#{carrosSelecionadosView.consultarVeiculos()}" 
+						        				update="mensagens veiculoTable"
+						        				process="@this,nomePesquisa,placaPesquisa,situacaoVeiculoEmpresaConveniadaCorridaNova,unidadePesquisa,empresaConveniadaCorridaNova" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+						        	
+				        			<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="veiculoTable" 
+											var="veiculo" 
+											rows="10"
+											rowIndexVar="veiculoRow" 
+											value="#{carrosSelecionadosView.veiculoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{veiculoRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">
+												<pr:commandLink 
+													action="#{carrosSelecionadosView.carregarVeiculo(veiculo)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Incluir Veículo da Empresa"
+													oncomplete="exibirIncluirVeiculo();" 
+													rendered="#{empty veiculo.indicadorPossuiEmpresaAssociada}"
+													process="@this">
+													<span class="fa fa-check"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{carrosSelecionadosView.carregarVeiculo(veiculo)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Excluir Veículo da Empresa"
+													oncomplete="exibirExcluirVeiculo();" 
+													rendered="#{not empty veiculo.indicadorPossuiEmpresaAssociada}"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Status Empresa" style="text-align: left; font-size: 85%; width: 180px;">
+												<h:outputText rendered="#{not empty veiculo.indicadorPossuiEmpresaAssociada}" value="Incluído / Associado" />
+												<h:outputText rendered="#{empty veiculo.indicadorPossuiEmpresaAssociada}" value="Não Incluído" />
+											</pr:column>
+											<pr:column headerText="Motorista" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{veiculo.motorista.nome}" />
+											</pr:column>
+											<pr:column headerText="Placa" style="text-align: left; font-size: 85%; width: 140px;">
+												<h:outputText value="#{veiculo.placa}" />
+											</pr:column>
+											<pr:column headerText="Marca" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{veiculo.marca}" />
+											</pr:column>
+											<pr:column headerText="Modelo" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{veiculo.modelo}" />
+											</pr:column>
+											<pr:column headerText="Unidade" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{veiculo.unidade}" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="veiculoTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="veiculoTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="veiculoTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function exibirExcluirVeiculo() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirIncluirVeiculo() {
+					$('#modalDetalheAtivacao').modal('show');
+				}
+				function fecharModalInclusao() {
+					$('#modalDetalheAtivacao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

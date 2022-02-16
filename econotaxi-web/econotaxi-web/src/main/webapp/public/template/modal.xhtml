@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:pr="http://primefaces.org/ui"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    contentType="text/html">
+    
+    <h:form prependId="false" id="formularioModal">
+    	
+    	<div class="modal fade" id="modalCarregando" tabindex="-1" role="dialog" aria-labelledby="modalCarregandoLabel">
+	    	<div class="modal-dialog">
+		        <div class="modal-content">
+		        	<h:panelGroup id="panelModalCarregando">
+			        	<div class="modal-header">
+				            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+				            <h4 class="modal-title">Carregando...</h4>
+			          	</div>
+		          		<div class="modal-body">
+		          			<div class="row">
+			          			<div class="col-md-12">
+				          			<h:graphicImage value="/public/template/assets/images/ajaxloadingbar.gif"></h:graphicImage>
+			          			</div>
+			          		</div>
+			          	</div>
+		        	</h:panelGroup>
+		        </div>
+			</div>
+		</div>
+    	
+	</h:form>
+    
+    <script>
+		function exibirModalResolucaoAlerta() {
+			$('#modalResolucaoAlerta').modal('show');
+		}
+		function fecharModalResolucaoAlerta() {
+			$('#modalResolucaoAlerta').modal('hide');
+			window.scrollTo(0, 0);
+		}
+		function abrirModalCarregando() {
+			$('#modalCarregando').modal('show');
+		}
+		function fecharModalCarregando() {
+			$('#modalCarregando').modal('hide');
+		}
+		function exibirModalResolucaoTodosAlerta() {
+			$('#modalResolucaoTodosAlerta').modal('show');
+		}
+		function fecharModalResolucaoTodosAlerta() {
+			$('#modalResolucaoTodosAlerta').modal('hide');
+		}
+	</script>
+    
+</f:view>

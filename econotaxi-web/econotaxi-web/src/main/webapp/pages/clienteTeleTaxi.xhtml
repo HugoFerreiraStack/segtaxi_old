@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir o cliente?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens clienteTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{clienteTeleTaxiView.excluirCliente()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheCliente">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Cliente</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Nome*:</label>
+						        			<h:inputText maxlength="500" styleClass="form-control" label="Nome" value="#{clienteTeleTaxiView.cliente.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Celular*:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control telefone" label="Data" value="#{clienteTeleTaxiView.cliente.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Telefone" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+				        					<label>Empresa*:</label><br />
+											<h:selectOneMenu 
+						        				id="empresaCorridaNova"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.cliente.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 3}">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaCorridaNovaLigue"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.cliente.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 1}">
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaCorridaNovaTele"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.cliente.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 2}">
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-4" style="clear: both; margin-top: 10px">
+						        			<label>E-mail:</label>
+						        			<h:inputText maxlength="500" styleClass="form-control" label="Nome" value="#{clienteTeleTaxiView.cliente.email}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Telefone:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control telefone" label="Data" value="#{clienteTeleTaxiView.cliente.telefone}">
+						        				<f:passThroughAttribute name="placeholder" value="Telefone" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Data de Nascimento:</label>
+						        			<h:inputText styleClass="form-control data" label="Nome" value="#{clienteTeleTaxiView.cliente.dataNascimento}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Nascimento" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="margin-top: 10px; clear: both;">
+						        			<label>Observações:</label>
+						        			<h:inputText styleClass="form-control" label="Observações" value="#{clienteTeleTaxiView.cliente.observacaoTele}">
+						        				<f:passThroughAttribute name="placeholder" value="Observações" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="margin-top: 10px; clear: both;">
+						        			<label>Complemento:</label>
+						        			<h:inputText styleClass="form-control" label="Observações" value="#{clienteTeleTaxiView.cliente.complemento}">
+						        				<f:passThroughAttribute name="placeholder" value="Complemento:" />
+						        			</h:inputText>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{clienteTeleTaxiView.salvarClienteTeleTaxi()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalDetalheEditar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheClienteEditar">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Cliente</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Nome*:</label>
+						        			<h:inputText maxlength="500" styleClass="form-control" label="Nome" value="#{clienteTeleTaxiView.clienteAlterar.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Celular*:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control telefone" label="Data" value="#{clienteTeleTaxiView.clienteAlterar.celular}">
+						        				<f:passThroughAttribute name="placeholder" value="Telefone" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+				        					<label>Empresa*:</label><br />
+											<h:selectOneMenu 
+						        				id="empresaCorridaNova2"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.clienteAlterar.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 3}">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaCorridaNovaLigue2"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.clienteAlterar.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 1}">
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaCorridaNovaTele2"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.clienteAlterar.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 2}">
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-4" style="clear: both; margin-top: 10px">
+						        			<label>E-mail:</label>
+						        			<h:inputText maxlength="500" styleClass="form-control" label="Nome" value="#{clienteTeleTaxiView.clienteAlterar.email}">
+						        				<f:passThroughAttribute name="placeholder" value="E-mail" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Telefone:</label>
+						        			<h:inputText maxlength="20" styleClass="form-control telefone" label="Data" value="#{clienteTeleTaxiView.clienteAlterar.telefone}">
+						        				<f:passThroughAttribute name="placeholder" value="Telefone" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4" style="margin-top: 10px">
+						        			<label>Data de Nascimento:</label>
+						        			<h:inputText styleClass="form-control data" label="Nome" value="#{clienteTeleTaxiView.clienteAlterar.dataNascimento}">
+						        				<f:passThroughAttribute name="placeholder" value="Data de Nascimento" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="margin-top: 10px; clear: both;">
+						        			<label>Observações:</label>
+						        			<h:inputText styleClass="form-control" label="Observações" value="#{clienteTeleTaxiView.clienteAlterar.observacaoTele}">
+						        				<f:passThroughAttribute name="placeholder" value="Observações" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="margin-top: 10px; clear: both;">
+						        			<label>Complemento:</label>
+						        			<h:inputText styleClass="form-control" label="Observações" value="#{clienteTeleTaxiView.clienteAlterar.complemento}">
+						        				<f:passThroughAttribute name="placeholder" value="Complemento:" />
+						        			</h:inputText>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{clienteTeleTaxiView.alterarClienteTeleTaxi()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{clienteTeleTaxiView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{clienteTeleTaxiView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!clienteTeleTaxiView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalheCliente"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesCliente()"
+												oncomplete="recarregarDatas()">
+						        				<i class="fa fa-plus"></i> Adicionar
+						        				<f:setPropertyActionListener value="#{null}" target="#{clienteTeleTaxiView.cliente}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both; margin-top: 10px">
+						        			<label>Nome:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{clienteTeleTaxiView.filtro.nome}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px">
+				        					<label>Empresa:</label>
+											<h:selectOneMenu 
+						        				id="empresaPesquisa1"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.filtro.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 3}">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaPesquisa2"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.filtro.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 1}">
+				        						<f:selectItem itemValue="1" itemLabel="Ligue-Táxi" />
+											</h:selectOneMenu>
+											<h:selectOneMenu 
+						        				id="empresaPesquisa3"
+				        						styleClass="form-control"
+				        						value="#{clienteTeleTaxiView.filtro.empresa}" 
+												label="Empresa"
+												style="height: 42px;"
+												rendered="#{clienteTeleTaxiView.usuarioTele.tipoTeleTaxi eq 2}">
+				        						<f:selectItem itemValue="2" itemLabel="Tele-Táxi" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa clienteTable mensagens empresaPesquisa1 empresaPesquisa2 empresaPesquisa3"
+						        				action="#{clienteTeleTaxiView.limparFormulario()}"
+						        				process="@this"
+						        				oncomplete="recarregarDatas()"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{clienteTeleTaxiView.pesquisarClientePorFiltro()}" 
+						        				update="clienteTable mensagens"
+						        				process="@this,nomePesquisa,empresaPesquisa1,empresaPesquisa2,empresaPesquisa3" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="clienteTable" 
+											var="cliente" 
+											rows="10"
+											rowIndexVar="clienteRow" 
+											value="#{clienteTeleTaxiView.clienteTeleDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 30px;">
+												<h:outputText value="#{clienteRow + 1}" />
+											</pr:column>
+											<pr:column exportable="false" headerText="Ações" styleClass="tools" style="text-align: center; font-size: 90%; width: 120px;">														
+												<pr:commandLink 
+													action="#{clienteTeleTaxiView.carregarCliente(cliente)}" 
+													style="color: #70B9B0; margin-right: 5px;" 
+													title="Excluir"
+													oncomplete="exibirExcluirCliente();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												<pr:commandLink 
+													action="#{clienteTeleTaxiView.carregarCliente(cliente)}" 
+													style="color: #70B9B0;" 
+													title="Excluir"
+													oncomplete="exibirEditarCliente();" 
+													update="panelModalDetalheClienteEditar"
+													process="@this">
+													<span class="fa fa-edit"></span>
+												</pr:commandLink>
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{cliente.nome}" />
+											</pr:column>
+											<pr:column headerText="Celular" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{cliente.celular}" />
+											</pr:column>
+											<pr:column headerText="E-mail" style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{cliente.email}" />
+											</pr:column>
+											<pr:column headerText="Telefone" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{cliente.telefone}" />
+											</pr:column>
+											<pr:column headerText="Dt. Nascimento" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{cliente.dataNascimento}" />
+											</pr:column>
+											<pr:column headerText="Empresa" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="Ligue-Táxi" rendered="#{cliente.empresa eq 1}" />
+												<h:outputText value="Tele-Táxi" rendered="#{cliente.empresa eq 2}" />
+											</pr:column>
+											<pr:column headerText="Observações" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{cliente.observacaoTele}" />
+											</pr:column>
+											<pr:column headerText="Complemento" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{cliente.complemento}" />
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="clienteTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="clienteTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="clienteTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+			
+				$( document ).ready(function() {
+					recarregarDatas();
+					
+					$('#modalDetalhe').on('shown.bs.modal', function () {
+						recarregarDatas();
+					});
+					$('#modalDetalheEditar').on('shown.bs.modal', function () {
+						recarregarDatas();
+					});
+				});
+			
+				function recarregarDatas() {
+	        		
+	        		$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	
+	        		$(".data").mask("99/99/9999");
+	        		
+	        		$(".telefone")
+				        .mask("(99) 9999-99999")
+				        .focusout(function (event) {  
+				            var target, phone, element;  
+				            target = (event.currentTarget) ? event.currentTarget : event.srcElement;  
+				            phone = target.value.replace(/\D/g, '');
+				            element = $(target);  
+				            element.unmask();  
+				            if(phone.length > 10) {  
+				                element.mask("(99) 99999-9999");  
+				            } else {  
+				                element.mask("(99) 9999-99999");  
+				            }  
+				    });
+	        	}
+			
+				function fecharModalCliente() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesCliente() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirExcluirCliente() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				
+				function exibirEditarCliente() {
+					$('#modalDetalheEditar').modal('show');
+				}
+				function fecharModalEditar() {
+					$('#modalDetalheEditar').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

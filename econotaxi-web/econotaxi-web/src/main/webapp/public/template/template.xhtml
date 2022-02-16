@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<f:view
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html"
+    locale="#{localeView.locale}">
+   
+   <html>
+		<h:head>
+			<meta charset="utf-8" />
+			<link rel="icon" href="#{loginView.icon}" />
+			<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+			<meta http-equiv="cache-control" content="max-age=31536000" />
+			<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+			<title><h:outputText value="#{loginView.nomeApp}" /></title>
+		  	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/public/template/assets/css/estilo.css" />
+		  	<style>
+		  		#preload {
+				  position: fixed;
+				  z-index: 9999999999999;
+				  top: 0;
+				  left: 0;
+				  width: 100%;
+				  height: 100%;
+				  opacity: 1;
+				  background-color: #fff;
+				  background-image: url('#{request.contextPath}/public/template/assets/images/loading.gif');
+				  background-size: 298px 298px;
+				  background-position: center;
+				  background-repeat: no-repeat;
+				  display: none;
+				}
+				.ui-state-active {
+					font-weight: bold !important;
+					font-size: 20px !important;
+				}
+				
+				/* The Modal (background) */
+				.modalImg {
+				  display: none; /* Hidden by default */
+				  position: fixed; /* Stay in place */
+				  z-index: 999999; /* Sit on top */
+				  padding-top: 100px; /* Location of the box */
+				  left: 0;
+				  top: 0;
+				  width: 100%; /* Full width */
+				  height: 100%; /* Full height */
+				  overflow: auto; /* Enable scroll if needed */
+				  background-color: rgb(0,0,0); /* Fallback color */
+				  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+				}
+		
+				/* Modal Content (Image) */
+				.modalImg-content {
+				  margin: auto;
+				  display: block;
+				  width: 80%;
+				  max-width: 700px;
+				}
+		
+				/* Caption of Modal Image (Image Text) - Same Width as the Image */
+				#captionImg {
+				  margin: auto;
+				  display: block;
+				  width: 80%;
+				  max-width: 700px;
+				  text-align: center;
+				  color: #ccc;
+				  padding: 10px 0;
+				  height: 150px;
+				}
+		
+				/* Add Animation - Zoom in the Modal */
+				.modal-contentImg, #captionImg {
+				  animation-name: zoom;
+				  animation-duration: 0.6s;
+				}
+		
+				@keyframes zoom {
+				  from {transform:scale(0)}
+				  to {transform:scale(1)}
+				}
+		
+				/* The Close Button */
+				.closeImg {
+				  position: absolute;
+				  top: 15px;
+				  right: 35px;
+				  color: #f1f1f1;
+				  font-size: 40px;
+				  font-weight: bold;
+				  transition: 0.3s;
+				}
+		
+				.closeImg:hover,
+				.closeImg:focus {
+				  color: #bbb;
+				  text-decoration: none;
+				  cursor: pointer;
+				}
+		
+				/* 100% Image Width on Smaller Screens */
+				@media only screen and (max-width: 700px){
+				  .modalImg-content {
+					width: 100%;
+				  }
+				}
+		  	</style>
+		  	<!-- Arquivos Javascript -->
+			<script type="text/javascript" src="#{request.contextPath}/public/template/assets/js/total.min.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/public/template/assets/js/jquery.maskMoney.min.js"></script>
+			<script>
+				$( document ).ready(function() {
+					$('.moeda').maskMoney({prefix:'R$ ', allowNegative: true, thousands:'.', decimal:',', affixesStay: false});
+
+					abrirModalImg = function(idImg) {
+					    $(".modalImg").css("display", "block");
+					    var srcImg = $("#" + idImg).attr('src');
+					    $("#img01").attr("src", srcImg);
+					    var altImg = $("#" + idImg).attr('alt');
+					    $("#captionImg").html(altImg);
+					}
+				});
+			</script>
+		</h:head>
+		
+		<body>
+			<div id="preload"></div>
+			
+			<!-- The Modal -->
+			<div id="myModalImg" class="modalImg">
+				<!-- The Close Button -->
+				<span class="closeImg" onclick="$('.modalImg').css('display', 'none');" style="cursor: pointer;">&#215;</span>
+		
+				<!-- Modal Content (The Image) -->
+				<img class="modalImg-content" id="img01" />
+		
+				<!-- Modal Caption (Image Text) -->
+				<div id="captionImg"></div>
+			</div>
+			
+  			<div class="app app-blue-sky">
+  			
+  				<pr:ajaxStatus onstart="$('#preload').fadeIn(100);" oncomplete="$('#preload').fadeOut(100);" /> 
+				
+				<ui:include src="/public/template/menu.xhtml"></ui:include>
+				
+				<h:form id="formPrincipal" prependId="false">
+				
+					<div class="app-container">
+					
+						<nav class="navbar navbar-default" id="navbar">
+						
+							<t:div id="menuAlertasDiv" styleClass="container-fluid">
+								
+								<div class="navbar-collapse collapse in" style="height: 82px;">
+									
+		   							<ul class="nav navbar-nav navbar-mobile">
+								        <li>
+								          	<button type="button" class="sidebar-toggle" 
+								          		data-toggle="collapse" 
+								          		data-target="#collapse1">
+								            	<i class="fa fa-bars"></i>
+								          	</button>
+								        </li>
+								        <div id="collapse1" class="panel-collapse collapse" style="position: absolute; clear: both; left: -30px; margin-top: 50px; margin-bottom: 50px;">
+									        
+									        <div class="sidebar-menu">
+									        
+												<span style="clear: both; font-weight: bold;"></span>
+												<ul class="sidebar-nav" style="padding-top: 10px; list-style: none; list-style-position: inside;">
+										      		<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(1)}" class="list-group-item">
+										      			<h:commandLink immediate="true" action="#{menuView.carregarMenu(1, 'inicio')}">
+										          			<div class="title">Dashboard</div>
+										      			</h:commandLink>
+										      		</t:htmlTag>
+										      		<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(7)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(7, 'cidade')}">
+											          		<div class="title">Cidades</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(4)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(4, 'motorista')}">
+											          		<div class="title">Motoristas</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(39)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(39, 'motoristaLigue')}">
+											          		<div class="title">Motoristas Ligue</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+												 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(8)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(8, 'veiculo')}">
+											          		<div class="title">Veículos</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(38)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(38, 'veiculoLigue')}">
+											          		<div class="title">Veículos Ligue</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(11)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(11, 'passageiro')}">
+											          		<div class="title">Passageiros</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+												 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(2)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(2, 'perfil')}">
+											          		<div class="title">Perfis</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+												 	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(3)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(3, 'usuario')}">
+											          		<div class="title">Usuários</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(22)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(22, 'usuarioTeleTaxi')}">
+											          		<div class="title">Usuários Tele-Táxi</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(18)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(18, 'lojista')}">
+											          		<div class="title">Lojistas</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(9)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(9, 'transacao')}">
+											          		<div class="title">Transações</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(6)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(6, 'corrida')}">
+											          		<div class="title">Corridas</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(23)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(23, 'corridaTeleTaxi')}">
+											          		<div class="title">Corridas Tele-Táxi</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(15)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(15, 'entrega')}">
+											          		<div class="title">Entregas</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(24)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(24, 'localidade')}">
+											          		<div class="title">Localidades</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(10)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(10, 'pacote')}">
+											          		<div class="title">Pacotes</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(12)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(12, 'radio')}">
+											          		<div class="title">Rádios</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(16)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(16, 'notificacoes')}">
+											          		<div class="title">Notificações</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(17)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(17, 'novidades')}">
+											          		<div class="title">Novidades</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(19)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(19, 'promocoes')}">
+											          		<div class="title">Promoções</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(13)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(13, 'auditoria')}">
+											          		<div class="title">Auditoria</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(20)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(20, 'feriado')}">
+											          		<div class="title">Feriados</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(21)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(21, 'rateio')}">
+											          		<div class="title">Rateio</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+											      	<t:htmlTag value="li" rendered="#{loginView.verificaAutorizacao(14)}" class="list-group-item" immediate="true">
+											        	<h:commandLink immediate="true" action="#{menuView.carregarMenu(14, 'parametros')}">
+											          		<div class="title">Parâmetros</div>
+											        	</h:commandLink>
+											      	</t:htmlTag>
+												</ul>
+												
+											</div>
+											
+								      	</div>
+								        <li class="logo">
+								          	<a class="navbar-brand" href="#">
+								          		<img src="#{loginView.logoMenu}" style="width: 150px;" />
+								          	</a>
+								        </li>
+		   							</ul>
+		   							
+							      	<ul class="nav navbar-nav navbar-left">
+							        	<li class="navbar-title">#{menuView.textoTitulo}</li>
+							      	</ul>
+		   							<ul class="nav navbar-nav navbar-right">
+		   								
+							       		<li class="dropdown profile">
+							          		<a href="/html/pages/profile.html" class="dropdown-toggle"  data-toggle="dropdown">
+							            		<h:graphicImage styleClass="profile-img" value="/public/template/assets/images/profile.png"></h:graphicImage>
+							          		</a>
+		       								<div class="dropdown-menu">
+									            <div class="profile-info">
+									              	<h4 class="username">#{loginView.usuario.nome}</h4>
+									            </div>
+									            <ul class="action">
+									            	<li style="padding: 20px;">V.: 4.1</li>
+									              	<li>
+										                <h:commandLink action="#{loginView.logout()}" immediate="true">
+										                  	Sair
+										                </h:commandLink>
+									              	</li>
+									            </ul>
+		       								</div>
+		   								</li>
+		   							</ul>
+								</div>
+							</t:div>
+						</nav>
+					
+						<ui:insert name="body" />
+						
+					</div>
+					
+				</h:form>
+				<ui:include src="/public/template/modal.xhtml"></ui:include>
+				
+			</div>
+			    
+	    </body>
+	    
+	</html>
+	
+</f:view>

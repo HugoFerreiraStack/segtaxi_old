@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalNova" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalNova">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Nova Ação</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+					              		<div class="col-md-12" style="margin-top: 10px">
+						        			<label>Texto*:</label>
+						        			<h:inputTextarea styleClass="form-control" required="true" label="Texto" value="#{acaoView.promocao.texto}">
+						        				<f:passThroughAttribute name="placeholder" value="Texto" />
+						        			</h:inputTextarea>
+										</div>
+										<div class="col-md-12" style="margin-top: 10px">
+						        			<label>Porcentagem*:</label>
+						        			<h:inputText styleClass="form-control numeric" maxlength="2" required="true" label="Porcentagem" value="#{acaoView.promocao.porcentagem}">
+						        				<f:passThroughAttribute name="placeholder" value="Porcentagem" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-12" style="margin-top: 10px">
+						        			<label>Tipo de Ação*:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						value="#{acaoView.promocao.tipo}" 
+												label="Tipo de Ação"
+												required="true"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{acaoView.listaAcaoEnum}" 
+															   var="tipo"
+															   itemLabel="#{tipo.descricao}"
+															   itemValue="#{tipo.codigo}" />
+											</h:selectOneMenu>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{acaoView.salvarAcao()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalDetalheExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Excluir</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					Deseja realmente excluir a ação?
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Excluir"
+			            			process="@this"
+			            			update="mensagens promocaoTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{acaoView.excluirAcao()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{acaoView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{acaoView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!acaoView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalNova"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirNova()">
+						        				<i class="fa fa-plus"></i> Nova Ação
+						        				<f:setPropertyActionListener value="#{null}" target="#{acaoView.promocao}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-12" style="clear: both; margin-top: 10px">
+						        			<label>Nome:</label>
+											<h:inputText 
+						        				id="textoPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{acaoView.filtro.texto}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="textoPesquisa promocaoTable mensagens"
+						        				action="#{acaoView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{acaoView.pesquisarAcaoPorFiltro()}" 
+						        				update="promocaoTable"
+						        				process="@this,textoPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="promocaoTable" 
+											var="promocao" 
+											rows="10"
+											rowIndexVar="promocaoRow" 
+											value="#{acaoView.promocaoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{promocaoRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Data Cadastro" style="text-align: left; font-size: 85%; width: 180px;">
+												<h:outputText value="#{promocao.dataAcao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Porcentagem" style="text-align: left; font-size: 85%; width: 180px;">
+												<h:outputText value="#{promocao.porcentagem}">
+													<f:convertNumber maxFractionDigits="2" groupingUsed="true" maxIntegerDigits="2" type="currency" locale="pt_BR" pattern="#0.00" />
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Texto" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{promocao.texto}" />
+											</pr:column>
+											<pr:column headerText="tipo" style="text-align: left; font-size: 85%; width: 250px;">
+												<h:outputText value="#{promocao.descricaoTipo}" />
+											</pr:column>
+											<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">
+												<pr:commandLink 
+													action="#{acaoView.carregarAcao(acao)}" 
+													style="margin-left: 10px; margin-right: 5px; color: #70B9B0;" 
+													title="Excluir Ação"
+													oncomplete="exibirExcluirAcao();" 
+													update="panelModalDetalheExclusao"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+			
+				$( document ).ready(function() {
+					$(".numeric").mask("#");
+					
+					$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+				 		$(".numeric").mask("#");
+				 		
+					});
+				});
+			
+				function fecharModalNova() {
+					$('#modalNova').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirNova() {
+					$('#modalNova').modal('show');
+				}
+				function exibirExcluirAcao() {
+					$('#modalDetalheExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalDetalheExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

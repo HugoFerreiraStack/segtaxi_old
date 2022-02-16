@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalNova" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalNova">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dar Crédito</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px">
+				          					<label>Público*:</label>
+				          					<h:selectOneMenu 
+												id="statusPesquisa"
+				        						styleClass="form-control"
+				        						value="#{rateioView.publico}" 
+												label="Público"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<f:selectItem itemLabel="Para todos os Usuários em Geral" itemValue="1" />
+												<f:selectItem itemLabel="Para Usuários que fizem corrida em uma Cidade" itemValue="2" />
+												<f:selectItem itemLabel="Para um Usuário Específico" itemValue="2" />
+												<pr:ajax oncomplete="esconderLoading()" event="change" listener="#{rateioView.carregarInformacoesTipoNotificacao}" update="formPrincipal:cidadeNotificacao formPrincipal:usuariosNotificacao" />
+											</h:selectOneMenu>
+				          				</div>
+				          				<t:div id="cidadeNotificacao">
+					          				<t:div styleClass="col-md-12" style="margin-top: 10px" rendered="#{rateioView.publico eq 5 or rateioView.publico eq 6 or rateioView.publico eq 7}">
+					          					<label>Cidade*:</label>
+					          					<h:selectOneMenu 
+													id="cidadeUsuarios"
+					        						styleClass="form-control"
+					        						value="#{rateioView.cidade}" 
+													label="Cidade"
+													converter="indexConverter"
+													style="height: 42px;">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{rateioView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+													<pr:ajax oncomplete="esconderLoading()" event="change" listener="#{rateioView.carregarUsuariosPorCidade}" update="formPrincipal:usuariosNotificacao" />
+												</h:selectOneMenu>
+					          				</t:div>
+					          			</t:div>
+					          			<t:div id="usuariosNotificacao">
+					          				<t:div styleClass="col-md-12" style="margin-top: 10px" rendered="#{(rateioView.publico eq 5 or rateioView.publico eq 6 or rateioView.publico eq 7) and not empty rateioView.cidade}">
+					          					<label>Usuário*:</label>
+					          					<h:selectOneMenu 
+													id="usuariosCidade"
+					        						styleClass="form-control"
+					        						value="#{rateioView.usuario}" 
+													label="Usuário"
+													converter="indexConverter"
+													style="height: 42px;">
+													<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+													<t:selectItems value="#{rateioView.usuarios}" 
+															   var="usuario"
+															   itemLabel="#{usuario.nome}"
+															   itemValue="#{usuario}" />
+												</h:selectOneMenu>
+					          				</t:div>
+					          			</t:div>
+					              		<div class="col-md-12" style="margin-top: 10px">
+						        			<label>Texto*:</label>
+						        			<h:inputTextarea styleClass="form-control" required="true" label="Texto" value="#{rateioView.notificacao.texto}">
+						        				<f:passThroughAttribute name="placeholder" value="Texto" />
+						        			</h:inputTextarea>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Salvar" 
+			            			action="#{rateioView.salvarNotificacao()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{rateioView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{rateioView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!rateioView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalNova"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirNova()">
+						        				<i class="fa fa-plus"></i> Nova Notificação
+						        				<f:setPropertyActionListener value="#{null}" target="#{rateioView.notificacao}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-12" style="clear: both; margin-top: 10px">
+						        			<label>Texto:</label>
+											<h:inputText 
+						        				id="textoPesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome" 
+						        				value="#{rateioView.filtro.texto}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="textoPesquisa notificacaoTable mensagens"
+						        				action="#{rateioView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{rateioView.pesquisarNotificacaoPorFiltro()}" 
+						        				update="notificacaoTable"
+						        				process="@this,textoPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="notificacaoTable" 
+											var="notificacao" 
+											rows="10"
+											rowIndexVar="notificacaoRow" 
+											value="#{rateioView.notificacaoDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{notificacaoRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Data Cadastro" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{notificacao.dataNotificacao}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Data Envio" style="text-align: left; font-size: 85%; width: 120px;">
+												<h:outputText value="#{notificacao.dataEnvio}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Texto" style="text-align: left; font-size: 85%; width: 300px;">
+												<h:outputText value="#{notificacao.texto}" />
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function fecharModalNova() {
+					$('#modalNova').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirNova() {
+					$('#modalNova').modal('show');
+				}
+				function esconderLoading() {
+					$('#preload').fadeOut(100);
+				}
+			</script>
+			
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

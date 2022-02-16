@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{auditoriaView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{auditoriaView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!auditoriaView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Usuário:</label>
+						        			<h:selectOneMenu 
+												id="usuarioPesquisa"
+				        						styleClass="form-control"
+				        						label="#{msg['auditoria.usuario']}"
+				        						value="#{auditoriaView.filtro.idUsuario}"
+				        						style="height: 44px;">
+				        						<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
+				        						<t:selectItems value="#{auditoriaView.usuarios}" 
+															   var="usuario"
+															   itemLabel="#{usuario.nome}"
+															   itemValue="#{usuario.id}" />
+				        					</h:selectOneMenu>
+										</div>
+										<div class="col-md-6">
+				        					<label>Classe:</label>
+											<h:inputText 
+						        				id="classePesquisa"
+						        				styleClass="form-control" 
+						        				label="Classe" 
+						        				value="#{auditoriaView.filtro.classe}">
+						        				<f:passThroughAttribute name="placeholder" value="#{msg['auditoria.nome.classe']}" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-6" style="clear: both; margin-top: 10px;">
+							        		<label>Data de Início:</label>
+											<h:inputText id="periodoInicioPesquisa" value="#{auditoriaView.filtro.dataInicioPeriodo}" styleClass="form-control data date-picker">
+												<f:passThroughAttribute name="placeholder" value="dd/MM/YYYY" />
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:inputText>
+										</div>
+										<div class="col-md-6" style="margin-top: 10px;">
+							        		<label>Data de Fim:</label>
+							        		<h:inputText id="periodoFimPesquisa" value="#{auditoriaView.filtro.dataFimPeriodo}" styleClass="form-control data date-picker">
+												<f:passThroughAttribute name="placeholder" value="dd/MM/YYYY" />
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="usuarioPesquisa classePesquisa periodoInicioPesquisa periodoFimPesquisa auditoriaTable mensagens"
+						        				action="#{auditoriaView.limparFormulario()}"
+						        				oncomplete="recarregarDatas()"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{auditoriaView.pesquisarAuditoriaPorFiltro()}" 
+						        				update="auditoriaTable"
+						        				process="@this,usuarioPesquisa,classePesquisa,periodoInicioPesquisa,periodoFimPesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="auditoriaTable" 
+											var="auditoria" 
+											rows="10"
+											rowIndexVar="auditoriaRow" 
+											value="#{auditoriaView.auditoriaDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+											<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 50px;">
+												<h:outputText value="#{auditoriaRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Usuário" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText rendered="#{not empty auditoria.usuario}" value="#{auditoria.usuario.nome}" />
+											</pr:column>
+											<pr:column headerText="Classe" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{auditoria.classeSimples}" />
+											</pr:column>
+											<pr:column headerText="Evento" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{auditoria.descricaoTipoTransacao}" />
+											</pr:column>
+											<pr:column headerText="Data" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText style="padding-left: 1px;" value="#{auditoria.dataEvento}">
+													<f:convertDateTime pattern="dd/MM/yyyy 'às' HH:mm:ss"/>
+												</h:outputText>
+											</pr:column>
+											<pr:column exportable="false" headerText="JSON" style="text-align: left; font-size: 85%; width: 100px;">
+												<pr:commandLink 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Copiar JSON p/ Área de Transferência"
+													process="@this"
+													onclick="copiarAreaTransferencia(#{auditoria.objeto})">
+													<span class="fa fa-files-o"></span>
+												</pr:commandLink>
+												<h:commandLink 
+													action="#{auditoriaView.downloadAuditoria(auditoria)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Baixar Arquivo JSON">
+													<span class="fa fa-download"></span>
+												</h:commandLink>
+											</pr:column>
+										</pr:dataTable>
+										
+										<h:commandLink title="XLS" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/excel.png" width="22" />
+											<pr:dataExporter type="xls" target="auditoriaTable" fileName="registros" />
+										</h:commandLink>
+										
+										<h:commandLink title="PDF" style="margin-right: 5px;">
+											<h:graphicImage value="/public/template/assets/images/pdf.png" width="22" />
+											<pr:dataExporter type="pdf" target="auditoriaTable" fileName="registros"/>
+										</h:commandLink>
+										
+										<h:commandLink title="CSV">
+											<h:graphicImage value="/public/template/assets/images/csv.png" width="22" />
+											<pr:dataExporter type="csv" target="auditoriaTable" fileName="registros" />
+										</h:commandLink>
+										
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				function recarregarDatas() {
+	        		
+	        		$('.date-picker').datepicker({
+	        			format: "dd/mm/yyyy",
+	        			language: "pt-BR",
+	        			todayHighlight: true,
+	        			autoclose: true,
+	        			clearBtn: true,
+	        			changeMonth: true,
+	        		    changeYear: true,
+	        		});
+	
+	        		$(".data").mask("99/99/9999");
+	        	}
+				
+				$( document ).ready(function() {
+			 		
+					recarregarDatas();
+					
+				});
+			</script>
+			<h:outputScript>
+	    		//<![CDATA[	
+				function copiarAreaTransferencia(jsonObject) {
+					
+					var json = JSON.stringify(jsonObject);
+					var success   = true,
+				      range     = document.createRange(),
+				      selection;
+
+					if (window.clipboardData) {
+				    	window.clipboardData.setData("Text", json);        
+				  	} else {
+				    	// Create a temporary element off screen.
+				    	var tmpElem = $("<div>");
+				    	tmpElem.css({
+				      		position: "absolute",
+				      		left:     "-1000px",
+				      		top:      "-1000px",
+				    	});
+				    	// Add the input value to the temp element.
+				    	tmpElem.text(json);
+				    	$("body").append(tmpElem);
+				    	// Select temp element.
+				    	range.selectNodeContents(tmpElem.get(0));
+				    	selection = window.getSelection ();
+				    	selection.removeAllRanges ();
+				    	selection.addRange (range);
+				    	// Lets copy.
+				    	try { 
+				      		success = document.execCommand ("copy", false, null);
+				    	}
+				    	catch (e) {
+				      		copyToClipboardFF(json);
+			    		}
+				    	if (success) {
+				      		// remove temp element.
+				      		tmpElem.remove();
+			    		}
+				  	}
+				}
+				
+				function copyToClipboardFF(text) {
+					window.prompt("Copy to clipboard: Ctrl C, Enter", text);
+				}
+			//]]>
+			</h:outputScript>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>

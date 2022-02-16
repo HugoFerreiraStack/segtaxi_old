@@ -1,0 +1,911 @@
+{
+	"info": {
+		"_postman_id": "fe0bab2f-318b-494c-80a8-e36b5e8defb8",
+		"name": "SegTaxi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Usuário",
+			"item": [
+				{
+					"name": "Criar usuário",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "mobile_front",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "123456789",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"nome\": \"TESTE\", \"login\": \"teste@teste.com\", \"senha\": \"123456\", \"celular\": \"32984877838\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/usuario/nova-conta/cadastro",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"usuario",
+								"nova-conta",
+								"cadastro"
+							]
+						},
+						"description": "Endpoint para criação do usuário.\r\n\r\nRealiza autenticação através de autenticação básica que verifica o dispositivo do usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Usuario logado",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "c8516510-bd83-46a3-85e0-76ce742a0209",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}rest/usuario/logado",
+							"host": [
+								"{{server}}rest"
+							],
+							"path": [
+								"usuario",
+								"logado"
+							]
+						},
+						"description": "Endpoint para consulta do usuário corrente.\r\n\r\nRetorna as informações completas do usuário corrente."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar usuário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1942,\r\n    \"login\": \"teste@teste.com\",\r\n    \"senha\": null,\r\n    \"tipo\": 3,\r\n    \"nome\": \"Admin Segtaxi\",\r\n    \"dataCadastro\": 1611080227000,\r\n    \"dataAlteracao\": 1611080227000,\r\n    \"indicadorFacebook\": null,\r\n    \"hashFacebook\": null,\r\n    \"indicadorGoogle\": null,\r\n    \"hashGoogle\": null,\r\n    \"dataNascimento\": null,\r\n    \"codigoSms\": null,\r\n    \"codigoEmail\": null,\r\n    \"hashSenha\": \"312ff8a5b0426bb38ead38b44864bd6007577a0570d6138a940c09815ce51751\",\r\n    \"codigoSenha\": null,\r\n    \"celular\": \"32999999999\",\r\n    \"indicadorCadeirante\": null,\r\n    \"hashTrocaSenha\": null,\r\n    \"indicadorBloqueio\": null,\r\n    \"motivoBloqueio\": null,\r\n    \"latitudeCorrente\": null,\r\n    \"longitudeCorrente\": null,\r\n    \"dataUltimaPosicao\": null,\r\n    \"qtdCorridasRealizadas\": null,\r\n    \"indicadorTeleTaxi\": null,\r\n    \"tipoTeleTaxi\": null,\r\n    \"indicadorEmpresaConveniada\": null,\r\n    \"idEmpresaConveniada\": null,\r\n    \"idCentroCusto\": null,\r\n    \"dtNascimento\": null,\r\n    \"indicadorAtivo\": null,\r\n    \"cargoEmpresa\": null,\r\n    \"sexo\": null,\r\n    \"imagem\": null,\r\n    \"radio1\": null,\r\n    \"radio2\": null,\r\n    \"empresaConveniada\": null,\r\n    \"centroCusto\": null,\r\n    \"idMaxipago\": null,\r\n    \"versaoApp\": null,\r\n    \"cnpjUsuario\": null,\r\n    \"telaInicial\": null,\r\n    \"cnpj\": null,\r\n    \"grupos\": null,\r\n    \"funcionalidades\": null,\r\n    \"codigoPerfil\": null,\r\n    \"motorista\": null,\r\n    \"veiculo\": null,\r\n    \"lojista\": null,\r\n    \"idCidade\": null,\r\n    \"veiculosAuxiliar\": null,\r\n    \"qtdDescontoLojista\": null,\r\n    \"possuiCartao\": null,\r\n    \"nomeMotorista\": null,\r\n    \"unidadeMotorista\": null,\r\n    \"placaMotorista\": null,\r\n    \"mensagemEnviada\": null,\r\n    \"corridas\": null,\r\n    \"dataUltimaCorrida\": null,\r\n    \"dataPrimeiraCorrida\": null,\r\n    \"mesAno\": null,\r\n    \"paginacao\": null,\r\n    \"hashImagem\": null,\r\n    \"dataNascimentoText\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/usuario/atualizarDados",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"usuario",
+								"atualizarDados"
+							]
+						},
+						"description": "Endpoint para atualização do usuário.\r\n\r\nÉ necessário passar o usuário completo ( Vide: resposta de \"usuário logado\")."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para tratamento de usuários.",
+			"auth": {
+				"type": "oauth2",
+				"oauth2": [
+					{
+						"key": "tokenName",
+						"value": "Access token",
+						"type": "string"
+					},
+					{
+						"key": "password",
+						"value": "123456",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "petrimti@gmail.com",
+						"type": "string"
+					},
+					{
+						"key": "tokenType",
+						"value": "",
+						"type": "string"
+					},
+					{
+						"key": "clientId",
+						"value": "mobile_front",
+						"type": "string"
+					},
+					{
+						"key": "clientSecret",
+						"value": "123456789",
+						"type": "string"
+					},
+					{
+						"key": "client_authentication",
+						"value": "header",
+						"type": "string"
+					},
+					{
+						"key": "accessTokenUrl",
+						"value": "http://localhost:8080/econotaxi-rest/oauth/token",
+						"type": "string"
+					},
+					{
+						"key": "grant_type",
+						"value": "password_credentials",
+						"type": "string"
+					},
+					{
+						"key": "scope",
+						"value": "",
+						"type": "string"
+					},
+					{
+						"key": "addTokenTo",
+						"value": "header",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Corridas",
+			"item": [
+				{
+					"name": "Cancelar corrida",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/corrida/cancelar",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"corrida",
+								"cancelar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar corrida empresarial",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"cidade\": \"cidade\",\r\n   \"usuario\": \"usuario\",\r\n   \"tipoVeiculo\": \"tipo\",\r\n   \"tipo\": \"tipo\",\r\n   \"valorFinal\": \"valor\",\r\n   \"indicadorAdaptado\": \"indicador\",\r\n   \"sexoMotorista\": \"sexoMotorista\",\r\n   \"origem\": \"origem\",\r\n   \"origemEndereco\": \"origemEndereco\",\r\n   \"origemLatitude\": \"origemLatitude\",\r\n   \"origemLongitude\": \"origemLongitude\",\r\n   \"destino\": \"destino\",\r\n   \"destinoEndereco\": \"destinoEndereco\",\r\n   \"destinoLatitude\":\"destinoLatitude\",\r\n   \"destinoLongitude\": \"destinoLongitude\",\r\n   \"distanciaKm\": \"distanciaKm\",\r\n   \"formaPagamento\": \"formaPagamento\",\r\n   \"idEmpresaConveniada\":  \"idEmpresaConveniada\",\r\n   \"voucher\":  \"voucher\",\r\n   \"tipoTeleTaxi\":  \"tipoTeletaxi\",\r\n   \"descontoCorrida\":  \"descontoCorrida\",\r\n   \"status\":  \"status\",\r\n   \"nomePassageiro\":  \"nomePassageiro\",\r\n   \"celularPassageiro\":  \"celularPassageiro\",\r\n   \"observacoes\":  \"observacoes\",\r\n   \"observacaoTele\":  \"observacaoTele\",\r\n   \"previsaoCorrida\":  \"previsaoCorrida\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/corrida/solicitarEmpresarial/",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"corrida",
+								"solicitarEmpresarial",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar corrida",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"cidade\": \"cidade\",\r\n   \"usuario\": \"usuario\",\r\n   \"tipoVeiculo\": \"tipoVeiculo\",\r\n   \"tipo\": \"tipo\",\r\n   \"valorFinal\": \"valorFinal\",\r\n   \"indicadorAdaptado\": \"indicadorAdaptado\",\r\n   \"sexoMotorista\": \"\",\r\n   \"origem\": \"\",\r\n   \"origemEndereco\" : \"\",\r\n   \"origemLatitude\": \"origemLatitude\" ,\r\n   \"origemLongitude\": \"origemLongitude\",\r\n   \"destino\": \"destino\",\r\n   \"destinoEndereco\": \"destinoEndereco\",\r\n   \"destinoLatitude\": \"destinoLatitude\",\r\n   \"destinoLongitude\": \"destinoLongitude\",\r\n   \"distanciaKm\": \"distanciaKm\",\r\n   \"indicadorSemDesconto\": \"indicadorSemDesconto\",\r\n   \"formaPagamento\" : \"formaPagamento\",\r\n   \"observacoes\": \"observacoes\",\r\n   \"observacaoTele\": \"observacoes\",\r\n   \"descontoCorrida\": \"descontoCorrida.toString()\",\r\n   \"previsaoCorrida\": \"previsao\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/corrida/solicitarEmpresarial/",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"corrida",
+								"solicitarEmpresarial",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar status",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"cidade\": 765  \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/corrida/verificarStatus",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"corrida",
+								"verificarStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Classificar corrida",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1 ,\n    \"tipo\": ,\n    \"classificacaoCorrida\": ,\n    \"classificacaoDescricao\": ,\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/rest/corrida/classificar/",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"rest",
+								"corrida",
+								"classificar",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orçamento de categorias",
+			"item": [
+				{
+					"name": "Get orçamento",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "bb6eaae9-3494-4b6b-b122-d1d079b2924b",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"origin\": {\"lat\":-46,\"lng\":-23.55},\n    \"destination\": {\"lat\":-46.27363,\"lng\":-23.3987472839},\n    \"intermediateCoordinates\": [ {\"lat\":-46.76812367812,\"lng\":-23.5874233} ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}rest/orcamento-categoria-provedor/",
+							"host": [
+								"{{server}}rest"
+							],
+							"path": [
+								"orcamento-categoria-provedor",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Versão",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "030a6c25-237d-41d4-ad4d-63e5201aa8e7",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{server}}/rest/usuario/versaoApp/",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"rest",
+						"usuario",
+						"versaoApp",
+						""
+					]
+				},
+				"description": "Endpoint que retorna credenciais do SMTP e outras informações estruturais do sistema."
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Refresh Token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "mobile_front",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refresh_token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/econotaxi-rest/oauth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"econotaxi-rest",
+						"oauth",
+						"token"
+					]
+				},
+				"description": "Endpoint para atualização de access_token.\r\nQuando o access_token vence, só mandar o refresh_token pra essa rota que ela atualiza."
+			},
+			"response": [
+				{
+					"name": "Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "petrimti@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/econotaxi-rest/oauth/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"econotaxi-rest",
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Expires",
+							"value": "0"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Undertow/1"
+						},
+						{
+							"key": "Server",
+							"value": "WildFly/9"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 07 Jan 2021 17:08:00 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"819bf322-ff05-4db4-9370-6980fb1f3f05\",\n    \"token_type\": \"bearer\",\n    \"refresh_token\": \"f7e77136-7496-44c6-b9ec-8e8171ac752e\",\n    \"expires_in\": 12,\n    \"scope\": \"read write\"\n}"
+				},
+				{
+					"name": "Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Autorization",
+								"value": "Basic bW9iaWxlX2Zyb250OjEyMzQ1Njc4OQ==",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "petrimti@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/econotaxi-rest/oauth/token",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"econotaxi-rest",
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Expires",
+							"value": "0"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Undertow/1"
+						},
+						{
+							"key": "Server",
+							"value": "WildFly/9"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 07 Jan 2021 17:08:00 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"819bf322-ff05-4db4-9370-6980fb1f3f05\",\n    \"token_type\": \"bearer\",\n    \"refresh_token\": \"f7e77136-7496-44c6-b9ec-8e8171ac752e\",\n    \"expires_in\": 12,\n    \"scope\": \"read write\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "mobile_front",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "petrimti@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}oauth/token",
+					"host": [
+						"{{server}}oauth"
+					],
+					"path": [
+						"token"
+					]
+				},
+				"description": "Endpoint para realização de login\r\n\r\nA autenticação é feita através de Basic Auth,\r\nespecificando qual o cliente que está sendo utilizado para realizar a requisição.\r\n\r\nRetorna um token de autenticação.\r\nO token dura por 300 segundos."
+			},
+			"response": [
+				{
+					"name": "Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "teste@teste.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/econotaxi-rest/oauth/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"econotaxi-rest",
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	]
+}

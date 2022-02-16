@@ -1,0 +1,30 @@
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    <application>
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+        
+        <!--<resource-bundle>
+			<base-name>br.com.seg.econotaxi.msgs.messages</base-name>
+			<var>msg</var>
+	   	</resource-bundle>
+	   	
+	   	<locale-config>
+	   		 <default-locale>pt_BR</default-locale>
+	   		 <supported-locale>en_US</supported-locale>
+	   		 <supported-locale>es_ES</supported-locale>
+	   	</locale-config>
+	   	
+	   	<message-bundle>br.com.seg.econotaxi.msgs.messages</message-bundle> -->
+        
+    </application>
+
+    <factory>
+        <exception-handler-factory>
+            br.com.seg.econotaxi.util.CustomExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>
+
+</faces-config>

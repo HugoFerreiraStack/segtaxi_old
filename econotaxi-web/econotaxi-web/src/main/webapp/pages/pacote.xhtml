@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:pr="http://primefaces.org/ui"
+    contentType="text/html">
+	
+	<ui:composition template="../public/template/template.xhtml">
+    
+		<ui:define name="body">
+			
+			<h:inputHidden id="nomeCidadeMapa" value="#{pacoteView.cidadeMapa}" />
+			<h:inputHidden id="latitudeLocalExistente" value="#{pacoteView.latitudeLocal}" />
+			<h:inputHidden id="longitudeLocalExistente" value="#{pacoteView.longitudeLocal}" />
+					
+			<div class="row" style="margin-top: 50px;">
+			
+				<div class="modal fade" id="modalLocalizacao" tabindex="-1" role="dialog" aria-labelledby="modalLocalizacaoLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalLocalizacao">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Definir Localização da Cidade</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12">
+				          					<label>Localização:</label><br />
+				          					<div id="googleMap" style="height: 350px;"></div>
+				          				</div>
+				          				<br />
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Latitude*:</label>
+				          					<h:inputText id="latitudeFinal" disabled="true" styleClass="latitudeCidade form-control" value="#{pacoteView.localPacote.latitude}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Longitude*:</label>
+				          					<h:inputText id="longitudeFinal" disabled="true" styleClass="longitudeCidade form-control" value="#{pacoteView.localPacote.longitude}" />
+				          				</div>
+				          				<div class="col-md-4" style="margin-top: 10px;">
+				          					<label>Nome*:</label>
+				          					<h:inputText id="nomeLocalPacote" label="Nome" styleClass="numeric form-control" value="#{pacoteView.localPacote.nome}" />
+				          				</div>
+				          				<br />
+				          				<div class="col-md-12" style="clear: both; margin-top: 10px;">
+				          					<label>Descrição*:</label>
+				          					<h:inputText id="descricaoLocalPacote" label="Descrição" styleClass="numeric form-control" value="#{pacoteView.localPacote.descricao}" />
+				          				</div>
+				          			</div>
+				          		</div>
+				          		
+				          		<div class="no-padding table-responsive" style="margin-top: 20px;">
+					        		<pr:dataTable 
+										emptyMessage="Nenhum local adicionado ao pacote até o momento."
+										id="pacoteLocalTable" 
+										var="localPacote" 
+										rows="10"
+										rowIndexVar="localPacoteRow" 
+										value="#{pacoteView.locaisPacote}"
+										tableStyleClass="table table-striped card-table"
+										style="border: 0px solid black !important;"
+										tableStyle="border: 0px solid black !important;"
+										paginator="true"
+										lazy="true"
+										paginatorAlwaysVisible="true"
+										paginatorPosition="bottom"
+										paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+						               	rowsPerPageTemplate="5,10,15,20,50,100">
+						               	<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+											<h:outputText value="#{localPacoteRow + 1}" />
+										</pr:column>
+										<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+											<h:outputText value="#{localPacote.nome}" />
+										</pr:column>
+										<pr:column headerText="Descrição" style="text-align: left; font-size: 85%; width: 200px;">
+											<h:outputText value="#{localPacote.descricao}" />
+										</pr:column>
+										<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">
+											<pr:commandLink 
+												action="#{pacoteView.excluirLocalPacote(localPacote)}" 
+												style="margin-right: 5px; color: #70B9B0;" 
+												title="Excluir Local"
+												update="mensagens pacoteLocalTable"
+												process="@this">
+												<span class="fa fa-trash"></span>
+											</pr:commandLink>
+										</pr:column>
+									</pr:dataTable>
+			      				</div>
+						        	
+				          		
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Adicionar Localização ao Pacote"
+			            			process="@this, latitudeLocalExistente, longitudeLocalExistente, nomeLocalPacote, descricaoLocalPacote"
+			            			update="mensagens pacoteLocalTable"
+			            			action="#{pacoteView.adicionarLocalPacote()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+			
+				<div class="modal fade" id="modalDetalhe" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			    	<div class="modal-dialog" style="width: 90%;">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalhePacote">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Dados do Pacote</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-4" style="clear: both;">
+						        			<label>Nome do Pacote:</label>
+											<h:inputText 
+						        				styleClass="form-control" 
+						        				label="Nome do Pacote" 
+						        				value="#{pacoteView.pacote.titulo}"
+						        				required="true">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Pacote" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-4">
+						        			<label>Cidade:</label>
+						        			<h:selectOneMenu 
+				        						styleClass="form-control"
+				        						value="#{pacoteView.pacote.cidade}" 
+												label="Cidade"
+												converter="indexConverter"
+												style="height: 42px;"
+												required="true">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{pacoteView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-4">
+						        			<label>Preço do Pacote (R$):</label>
+											<h:inputText 
+						        				styleClass="form-control moeda" 
+						        				label="Preço do Pacote (R$)" 
+						        				required="true"
+						        				value="#{pacoteView.pacote.preco}">
+						        				<f:passThroughAttribute name="placeholder" value="Preço do Pacote (R$)" />
+						        				<f:convertNumber maxFractionDigits="2" groupingUsed="true" maxIntegerDigits="2" type="percent" locale="pt_BR" pattern="#0.00" />
+						        			</h:inputText>
+										</div>
+										<br />
+										<div class="col-md-12" style="clear: both;">
+						        			<label>Descrição:</label>
+											<h:inputTextarea 
+						        				styleClass="form-control" 
+						        				label="Descricao" 
+						        				value="#{pacoteView.pacote.descricao}"
+						        				required="true">
+						        				<f:passThroughAttribute name="placeholder" value="Descricao" />
+						        			</h:inputTextarea>
+										</div>
+				          			</div>
+						  		</div>
+						  	</h:panelGroup>
+			         
+			          		<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<h:commandLink 
+			            			styleClass="btn btn-sm btn-primary"
+			            			value="Salvar" 
+			            			action="#{pacoteView.salvarPacote()}" />
+			          		</div>
+				   		</div>
+					</div>
+		   		</div>
+		   		
+		   		<div class="modal fade" id="modalExclusao" tabindex="-1" role="dialog" aria-labelledby="myModalExclusaoLabel">
+			    	<div class="modal-dialog">
+				        <div class="modal-content">
+				        	<h:panelGroup id="panelModalDetalheExclusaoDefinitivo">
+					        	<div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&#215;</span></button>
+						            <h4 class="modal-title">Exclusão Definitiva</h4>
+					          	</div>
+				          		<div class="modal-body">
+				          			<div class="row">
+				          				<div class="col-md-12" style="margin-top: 10px;">
+				          					<label>Deseja Excluir o Pacote?</label>
+				          				</div>
+				          			</div>
+				          		</div>
+				          	</h:panelGroup>
+				          	
+				          	<div class="modal-footer">
+			            		<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Fechar</button>
+			            		
+			            		<pr:commandLink 
+			            			styleClass="btn btn-sm btn-primary" 
+			            			value="Confirmar Exclusão"
+			            			process="@this"
+			            			update="mensagens pacoteTable"
+			            			oncomplete="fecharModalExclusao()" 
+			            			action="#{pacoteView.excluirPacote()}" />
+			          		</div>
+				          	
+				          </div>
+			    	</div>
+			    </div>
+		   		
+				<div class="col-sm-12 col-xs-12">
+		      		<div class="card">
+		        		<div class="card-header">
+		        			Pesquisa
+		        		</div>
+		        		<div class="card-body">
+		          			<div class="section">
+		            			<div class="section-body">
+		            			
+		            				<t:div id="mensagens">
+					     				<t:div styleClass="row" rendered="#{pacoteView.messages}" style="padding-left: 10px; padding-right: 10px;">
+											<t:div rendered="#{pacoteView.mensagensErro}" class="alert alert-danger">
+												<h3><i class="fa fa-times"></i> Erro!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+						                    
+						                    <t:div rendered="#{!pacoteView.mensagensErro}" class="alert alert-success">
+												<h3><i class="fa fa-check"></i> Sucesso!</h3>
+												<h:messages style="list-style-type: none !important;" />
+						                    </t:div>
+										</t:div>
+									</t:div>
+									        
+						        	<div class="row">
+						        		<div class="col-md-6" style="padding-bottom: 10px;">
+						        			<h3>Filtro de Pesquisa</h3>
+						        		</div>
+						        		<div class="col-md-6" style="text-align: right;">
+						        			<pr:commandLink 
+						        				update="panelModalDetalhePacote"
+												process="@this" 
+												styleClass="btn btn-primary" 
+												onclick="exibirDetalhesPacote()">
+						        				<i class="fa fa-plus"></i> Adicionar
+						        				<f:setPropertyActionListener value="#{null}" target="#{pacoteView.pacote}"></f:setPropertyActionListener>
+						        			</pr:commandLink>
+						        		</div>
+						        		<br />
+							        	<div class="col-md-6" style="clear: both;">
+						        			<label>Nome do Pacote:</label>
+											<h:inputText 
+						        				id="nomePesquisa"
+						        				styleClass="form-control" 
+						        				label="Nome do Pacote" 
+						        				value="#{pacoteView.filtro.titulo}">
+						        				<f:passThroughAttribute name="placeholder" value="Nome do Pacote" />
+						        			</h:inputText>
+										</div>
+										<div class="col-md-6">
+						        			<label>Cidade:</label>
+						        			<h:selectOneMenu 
+						        				id="cidadePesquisa"
+				        						styleClass="form-control"
+				        						value="#{pacoteView.filtro.cidade}" 
+												label="Cidade"
+												converter="indexConverter"
+												style="height: 42px;">
+												<f:selectItem itemLabel="Selecione..." itemValue="#{null}" />
+												<t:selectItems value="#{pacoteView.cidades}" 
+															   var="cidade"
+															   itemLabel="#{cidade.nome}"
+															   itemValue="#{cidade}" />
+											</h:selectOneMenu>
+										</div>
+										<br />
+										<div class="col-md-12" style="text-align: right; margin-top: 10px;">
+				        					<h:commandLink 
+				        						styleClass="btn btn-warning" 
+				        						immediate="true" 
+				        						action="#{menuView.carregarMenu(1, 'inicio')}" 
+				        						value="Voltar" 
+				        						style="margin-right: 10px;" />
+				        					
+				        					<pr:commandLink 
+				        						styleClass="btn btn-default" 
+				        						style="margin-right: 10px;" 
+				        						value="Limpar"
+				        						update="nomePesquisa cidadePesquisa pacoteTable mensagens"
+						        				action="#{pacoteView.limparFormulario()}"
+						        				process="@this"
+						        				immediate="true" />
+									        				
+						        			<pr:commandLink 
+						        				styleClass="btn btn-info" 
+						        				value="Pesquisar"
+						        				action="#{pacoteView.pesquisarPacotePorFiltro()}" 
+						        				update="pacoteTable"
+						        				process="@this,nomePesquisa,cidadePesquisa" />
+				        					
+				        					<hr />
+				        				</div>
+						        		
+					        		</div>
+					        		
+					        		<div class="no-padding table-responsive" style="margin-top: 20px;">
+						        		<pr:dataTable 
+											emptyMessage="Nenhum resultado encontrado com os filtros fornecidos."
+											id="pacoteTable" 
+											var="pacote" 
+											rows="10"
+											rowIndexVar="pacoteRow" 
+											value="#{pacoteView.pacoteDataModel}"
+											tableStyleClass="table table-striped card-table"
+											style="border: 0px solid black !important;"
+											tableStyle="border: 0px solid black !important;"
+											paginator="true"
+											lazy="true"
+											paginatorAlwaysVisible="true"
+											paginatorPosition="bottom"
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+							               	rowsPerPageTemplate="5,10,15,20,50,100">
+							               	<pr:column headerText="#" style="text-align: left; font-size: 85%; width: 10px;">
+												<h:outputText value="#{pacoteRow + 1}" />
+											</pr:column>
+											<pr:column headerText="Nome" style="text-align: left; font-size: 85%; width: 200px;">
+												<h:outputText value="#{pacote.titulo}" />
+											</pr:column>
+											<pr:column headerText="Valor (R$)" style="text-align: left; font-size: 85%; width: 150px;">
+												<h:outputText value="#{pacote.preco}">
+													<f:convertNumber maxFractionDigits="2" groupingUsed="true" maxIntegerDigits="2" type="percent" locale="pt_BR" pattern="#0.00" />
+												</h:outputText>
+											</pr:column>
+											<pr:column headerText="Ações" styleClass="tools" style="text-align: left; font-size: 90%; width: 120px;">
+												<pr:commandLink 
+													action="#{pacoteView.carregarPacote(pacote)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Detalhar Pacote"
+													oncomplete="exibirDetalhesPacote();" 
+													update="panelModalDetalhePacote"
+													process="@this">
+													<span class="fa fa-search"></span>
+												</pr:commandLink>
+												
+												<pr:commandLink 
+													action="#{pacoteView.carregarPacote(pacote)}" 
+													style="margin-right: 5px; color: #70B9B0;" 
+													title="Excluir Pacote"
+													oncomplete="exibirExcluirPacote();" 
+													update="panelModalDetalhePacote"
+													process="@this">
+													<span class="fa fa-times"></span>
+												</pr:commandLink>
+												
+												<pr:commandLink 
+													action="#{pacoteView.carregarPacote(pacote)}" 
+													style="margin-left: 5px; color: #70B9B0;" 
+													title="Adicionar Locais"
+													oncomplete="exibirLocaisPacote('#{pacote.cidade.nome}');" 
+													update="panelModalLocalizacao nomeCidadeMapa latitudeLocalExistente longitudeLocalExistente"
+													process="@this">
+													<span class="fa fa-map-marker"></span>
+												</pr:commandLink>
+												
+											</pr:column>
+										</pr:dataTable>
+				      				</div>
+						        	
+						        </div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+			<script src="https://maps.google.com/maps/api/js?file=api&amp;v=3&amp;key=AIzaSyBqwOrp--K7rhl--mQvsdIqwSX4voNqR1g"></script>
+			
+			<script>
+			
+				var map;
+			 	var center;
+			 	var marker;
+			 	var latitude;
+			 	var longitude;
+			 	
+			 	$( document ).ready(function() {
+			 		
+					$('#modalLocalizacao').on('shown.bs.modal', function () {
+				 		
+					    google.maps.event.trigger(map, "resize");
+					    map.setCenter(center);
+					    
+					    if ($('#latitudeLocalExistente').val() == null || $('#latitudeLocalExistente').val() == '') {
+						    $('.latitudeCidade').val(latitude);
+					    } else {
+					    	$('.latitudeCidade').val($('#latitudeLocalExistente').val());
+					    }
+					    
+					    if ($('#longitudeLocalExistente').val() == null || $('#longitudeLocalExistente').val() == '') {
+						    $('.longitudeCidade').val(latitude);
+					    } else {
+					    	$('.longitudeCidade').val($('#longitudeLocalExistente').val());
+					    }
+					});
+			 		
+					$('#modalDetalhe').on('shown.bs.modal', function () {
+					 	$('.moeda').maskMoney({prefix:'R$ ', allowNegative: true, thousands:'.', decimal:',', affixesStay: false});
+				 	});
+				});
+			
+				function fecharModalPacote() {
+					$('#modalDetalhe').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirExcluirPacote() {
+					$('#modalExclusao').modal('show');
+				}
+				function fecharModalExclusao() {
+					$('#modalExclusao').modal('hide');
+					window.scrollTo(0, 0);
+				}
+				function exibirDetalhesPacote() {
+					$('#modalDetalhe').modal('show');
+				}
+				function exibirLocaisPacote(cidadeNome) {
+					var geocoder = new google.maps.Geocoder();
+					var address = cidadeNome;
+					geocoder.geocode( { 'address': address }, function(results, status) {
+						
+						if (status == google.maps.GeocoderStatus.OK) {
+							latitude = results[0].geometry.location.lat();
+							longitude = results[0].geometry.location.lng();
+							
+							center = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+					        map = new google.maps.Map(document.getElementById('googleMap'), {
+					          zoom: 11,
+					          mapTypeId: google.maps.MapTypeId.ROADMAP,
+					          center: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
+					        });
+					        
+					        marker = new google.maps.Marker({
+					          position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+					          map: map,
+					          title: cidadeNome,
+					          draggable: true,
+					          animation: google.maps.Animation.DROP
+					        });
+					        marker.addListener('drag', toggleBounce);
+					        
+							$('#modalLocalizacao').modal('show');
+					    }
+						
+					});
+				}
+				
+				function toggleBounce() {
+					center = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+					$('.latitudeCidade').val(marker.getPosition().lat());
+					$('.longitudeCidade').val(marker.getPosition().lng());
+					$('#latitudeLocalExistente').val(marker.getPosition().lat());
+					$('#longitudeLocalExistente').val(marker.getPosition().lng());
+				}
+				
+			</script>
+		</ui:define>
+		
+	</ui:composition>
+	
+</f:view>
